@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lightweight 3D Human</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #f5f5f5;
+        }
+
+        #canvas3d {
+            width: 100vw;
+            height: 100vh;
+            display: block;
+            cursor: grab;
+        }
+
+        #canvas3d:active {
+            cursor: grabbing;
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #7a4825;
+            font-family: Arial, sans-serif;
+            font-size: 18px;
+            z-index: 10;
+        }
+
+        .loading.hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading" class="loading">Loading...</div>
+    <canvas id="canvas3d"></canvas>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r160/three.min.js"></script>
+    <script>
+        class LightweightHuman {
+            constructor() {
+                this.scene = null;
+                this.camera = null;
+                this.renderer = null;
+                this.canvas = null;
+                this.humanModel = null;
+                this.mouseX = 0;
+                this.mouseY = 0;
+
+                this.init();
+            }
+
+            init() {
+                this.setupScene();
+                this.createSimpleHuman();
+                this.setupLighting();
+                this.setupControls();
+                this.animate();
+                this.hideLoading();
+            }
+
+            setupScene() {
+                this.canvas = document.getElementById('canvas3d');
+
+                // Scene
+                this.scene = new THREE.Scene();
+                this.scene.background = new THREE.Color(0xf0f0f0);
+
+                // Camera
+                this.camera = new THREE.PerspectiveCamera(
+                    50,
+                    window.innerWidth / window.innerHeight,
+                    0.1,
+                    100
+                );
+                this.camera.position.set(0, 1.5, 3);
+
+                // Renderer - simplified settings for performance
+                this.renderer = new THREE.WebGLRenderer({
+                    canvas: this.canvas,
+                    antialias: false, // Disabled for performance
+                    alpha: false
+                });
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.renderer.setPixelRatio(1); // Fixed to 1 for performance
+                this.renderer.shadowMap.enabled = false; // Disabled shadows
+
+                window.addEventListener('resize', () => this.handleResize());
+            }
+
+            setupLighting() {
+                // Simple lighting setup
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+                this.scene.add(ambientLight);
+
+                const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+                directionalLight.position.set(1, 2, 1);
+                this.scene.add(directionalLight);
+            }
+
+            createSimpleHuman() {
+                const humanGroup = new THREE.Group();
+
+                // Simple material with your skin color - no fancy effects
+                const skinMaterial = new THREE.MeshLambertMaterial({
+                    color: 0x7a4825 // Your skin tone
+                });
+
+                // Simplified geometry - lower polygon count
+                const parts = {};
+
+                // Head
+                const headGeometry = new THREE.SphereGeometry(0.12, 8, 6);
+                parts.head = new THREE.Mesh(headGeometry, skinMaterial);
+                parts.head.position.y = 1.65;
+                humanGroup.add(parts.head);
+
+                // Neck
+                const neckGeometry = new THREE.CylinderGeometry(0.05, 0.06, 0.12, 8);
+                parts.neck = new THREE.Mesh(neckGeometry, skinMaterial);
+                parts.neck.position.y = 1.5;
+                humanGroup.add(parts.neck);
+
+                // Torso
+                const torsoGeometry = new THREE.BoxGeometry(0.3, 0.5, 0.2);
+                parts.torso = new THREE.Mesh(torsoGeometry, skinMaterial);
+                parts.torso.position.y = 1.15;
+                humanGroup.add(parts.torso);
+
+                // Abdomen
+                const abdomenGeometry = new THREE.BoxGeometry(0.25, 0.3, 0.18);
+                parts.abdomen = new THREE.Mesh(abdomenGeometry, skinMaterial);
+                parts.abdomen.position.y = 0.8;
+                humanGroup.add(parts.abdomen);
+
+                // Pelvis
+                const pelvisGeometry = new THREE.BoxGeometry(0.28, 0.2, 0.2);
+                parts.pelvis = new THREE.Mesh(pelvisGeometry, skinMaterial);
+                parts.pelvis.position.y = 0.6;
+                humanGroup.add(parts.pelvis);
+
+                // Arms
+                this.createSimpleArms(humanGroup, skinMaterial);
+
+                // Legs
+                this.createSimpleLegs(humanGroup, skinMaterial);
+
+                this.humanModel = humanGroup;
+                this.scene.add(humanGroup);
+            }
+
+            createSimpleArms(group, material) {
+                // Left Upper Arm
+                const upperArmGeometry = new THREE.CylinderGeometry(0.04, 0.05, 0.25, 6);
+                const leftUpperArm = new THREE.Mesh(upperArmGeometry, material);
+                leftUpperArm.position.set(-0.2, 1.25, 0);
+                leftUpperArm.rotation.z = 0.2;
+                group.add(leftUpperArm);
+
+                // Right Upper Arm
+                const rightUpperArm = new THREE.Mesh(upperArmGeometry, material);
+                rightUpperArm.position.set(0.2, 1.25, 0);
+                rightUpperArm.rotation.z = -0.2;
+                group.add(rightUpperArm);
+
+                // Left Forearm
+                const forearmGeometry = new THREE.CylinderGeometry(0.035, 0.04, 0.22, 6);
+                const leftForearm = new THREE.Mesh(forearmGeometry, material);
+                leftForearm.position.set(-0.25, 0.95, 0);
+                leftForearm.rotation.z = 0.1;
+                group.add(leftForearm);
+
+                // Right Forearm
+                const rightForearm = new THREE.Mesh(forearmGeometry, material);
+                rightForearm.position.set(0.25, 0.95, 0);
+                rightForearm.rotation.z = -0.1;
+                group.add(rightForearm);
+
+                // Hands
+                const handGeometry = new THREE.BoxGeometry(0.06, 0.1, 0.03);
+                const leftHand = new THREE.Mesh(handGeometry, material);
+                leftHand.position.set(-0.28, 0.75, 0);
+                group.add(leftHand);
+
+                const rightHand = new THREE.Mesh(handGeometry, material);
+                rightHand.position.set(0.28, 0.75, 0);
+                group.add(rightHand);
+            }
+
+            createSimpleLegs(group, material) {
+                // Thighs
+                const thighGeometry = new THREE.CylinderGeometry(0.06, 0.07, 0.35, 6);
+                const leftThigh = new THREE.Mesh(thighGeometry, material);
+                leftThigh.position.set(-0.08, 0.35, 0);
+                group.add(leftThigh);
+
+                const rightThigh = new THREE.Mesh(thighGeometry, material);
+                rightThigh.position.set(0.08, 0.35, 0);
+                group.add(rightThigh);
+
+                // Shins
+                const shinGeometry = new THREE.CylinderGeometry(0.04, 0.05, 0.32, 6);
+                const leftShin = new THREE.Mesh(shinGeometry, material);
+                leftShin.position.set(-0.08, 0.0, 0);
+                group.add(leftShin);
+
+                const rightShin = new THREE.Mesh(shinGeometry, material);
+                rightShin.position.set(0.08, 0.0, 0);
+                group.add(rightShin);
+
+                // Feet
+                const footGeometry = new THREE.BoxGeometry(0.08, 0.04, 0.15);
+                const leftFoot = new THREE.Mesh(footGeometry, material);
+                leftFoot.position.set(-0.08, -0.18, 0.05);
+                group.add(leftFoot);
+
+                const rightFoot = new THREE.Mesh(footGeometry, material);
+                rightFoot.position.set(0.08, -0.18, 0.05);
+                group.add(rightFoot);
+            }
+
+            setupControls() {
+                let isMouseDown = false;
+
+                this.canvas.addEventListener('mousedown', (event) => {
+                    isMouseDown = true;
+                });
+
+                this.canvas.addEventListener('mousemove', (event) => {
+                    if (isMouseDown) {
+                        this.mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+                        this.mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+                    }
+                });
+
+                this.canvas.addEventListener('mouseup', () => {
+                    isMouseDown = false;
+                });
+
+                // Simple zoom
+                this.canvas.addEventListener('wheel', (event) => {
+                    event.preventDefault();
+                    this.camera.position.z += event.deltaY * 0.001;
+                    this.camera.position.z = Math.max(2, Math.min(5, this.camera.position.z));
+                });
+
+                // Touch support
+                this.canvas.addEventListener('touchstart', (event) => {
+                    event.preventDefault();
+                    isMouseDown = true;
+                });
+
+                this.canvas.addEventListener('touchmove', (event) => {
+                    event.preventDefault();
+                    if (isMouseDown && event.touches[0]) {
+                        this.mouseX = (event.touches[0].clientX / window.innerWidth) * 2 - 1;
+                        this.mouseY = -(event.touches[0].clientY / window.innerHeight) * 2 + 1;
+                    }
+                });
+
+                this.canvas.addEventListener('touchend', () => {
+                    isMouseDown = false;
+                });
+            }
+
+            animate() {
+                requestAnimationFrame(() => this.animate());
+
+                // Simple rotation based on mouse
+                if (this.humanModel) {
+                    this.humanModel.rotation.y = this.mouseX * 2;
+                    this.humanModel.rotation.x = this.mouseY * 0.5;
+                }
+
+                this.renderer.render(this.scene, this.camera);
+            }
+
+            handleResize() {
+                this.camera.aspect = window.innerWidth / window.innerHeight;
+                this.camera.updateProjectionMatrix();
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+
+            hideLoading() {
+                document.getElementById('loading').classList.add('hidden');
+            }
+        }
+
+        // Start immediately - no waiting
+        new LightweightHuman();
+    </script>
+</body>
+</html>
