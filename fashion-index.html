@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Dressing Room - Try On Clothes in 3D</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #000000;
+            --secondary-color: #ffffff;
+            --accent-color: #007bff;
+            --text-dark: #1a1a1a;
+            --text-light: #666666;
+            --border-color: #e0e0e0;
+            --bg-light: #f8f9fa;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --shadow-light: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-medium: 0 4px 16px rgba(0,0,0,0.12);
+            --shadow-heavy: 0 8px 32px rgba(0,0,0,0.16);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--secondary-color);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: var(--secondary-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-light);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 70px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+
+        .nav-menu a {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-menu a:hover {
+            color: var(--accent-color);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            width: 300px;
+            height: 40px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0 40px 0 16px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .cart-icon {
+            position: relative;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background 0.2s ease;
+        }
+
+        .cart-icon:hover {
+            background: var(--bg-light);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        /* Main Layout */
+        .main-container {
+            display: grid;
+            grid-template-columns: 320px 1fr 380px;
+            height: calc(100vh - 70px);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--bg-light);
+            border-right: 1px solid var(--border-color);
+            padding: 30px 20px;
+            overflow-y: auto;
+        }
+
+        .sidebar-section {
+            margin-bottom: 40px;
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+        }
+
+        .model-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .gender-selector {
+            display: flex;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .gender-option {
+            flex: 1;
+            padding: 12px;
+            background: var(--secondary-color);
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .gender-option.active {
+            background: var(--primary-color);
+            color: var(--secondary-color);
+        }
+
+        .skin-tone-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .skin-tone {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .skin-tone:hover,
+        .skin-tone.active {
+            transform: scale(1.1);
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .measurement-control {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .measurement-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .measurement-slider {
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            background: var(--border-color);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .measurement-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .measurement-value {
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        /* 3D Viewer */
+        .viewer-container {
+            position: relative;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .viewer-canvas {
+            width: 100%;
+            height: 100%;
+            cursor: grab;
+        }
+
+        .viewer-canvas:active {
+            cursor: grabbing;
+        }
+
+        .viewer-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 12px 16px;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-light);
+        }
+
+        .viewer-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-light);
+        }
+
+        .control-btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        /* Clothing Panel */
+        .clothing-panel {
+            background: var(--secondary-color);
+            border-left: 1px solid var(--border-color);
+            padding: 30px 20px;
+            overflow-y: auto;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .panel-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .upload-btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .upload-btn:hover {
+            background: #0056b3;
+            transform: translateY(-1px);
+        }
+
+        .clothing-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .category-tab {
+            padding: 8px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            background: var(--secondary-color);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .category-tab.active {
+            background: var(--primary-color);
+            color: var(--secondary-color);
+            border-color: var(--primary-color);
+        }
+
+        .clothing-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .clothing-item {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--secondary-color);
+        }
+
+        .clothing-item:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .clothing-image {
+            width: 100%;
+            height: 120px;
+            background: var(--bg-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: var(--text-light);
+        }
+
+        .clothing-info {
+            padding: 15px;
+        }
+
+        .clothing-name {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .clothing-price {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        .try-on-btn {
+            width: 100%;
+            background: var(--primary-color);
+            color: var(--secondary-color);
+            border: none;
+            padding: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .try-on-btn:hover {
+            background: #333;
+        }
+
+        /* Current Outfit */
+        .current-outfit {
+            background: var(--bg-light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .outfit-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .outfit-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .outfit-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: var(--secondary-color);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .outfit-item-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .remove-item {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: color 0.2s ease;
+        }
+
+        .remove-item:hover {
+            color: #dc3545;
+        }
+
+        .outfit-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .outfit-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--secondary-color);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .outfit-btn.primary {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        .outfit-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .main-container {
+                grid-template-columns: 280px 1fr 320px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr auto;
+            }
+
+            .sidebar,
+            .clothing-panel {
+                position: fixed;
+                top: 70px;
+                height: calc(100vh - 70px);
+                z-index: 100;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                width: 320px;
+            }
+
+            .sidebar.open,
+            .clothing-panel.open {
+                transform: translateX(0);
+            }
+
+            .clothing-panel {
+                right: 0;
+                transform: translateX(100%);
+            }
+
+            .clothing-panel.open {
+                transform: translateX(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 15px;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .search-box input {
+                width: 200px;
+            }
+
+            .sidebar,
+            .clothing-panel {
+                width: 100vw;
+            }
+        }
+
+        /* Loading States */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            height: 100%;
+            color: var(--text-light);
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            background: var(--success-color);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: var(--shadow-heavy);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1001;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background: #dc3545;
+        }
+
+        .notification.warning {
+            background: var(--warning-color);
+            color: var(--text-dark);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <a href="#" class="logo">VirtualFit</a>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#women">Women</a></li>
+                    <li><a href="#men">Men</a></li>
+                    <li><a href="#kids">Kids</a></li>
+                    <li><a href="#accessories">Accessories</a></li>
+                    <li><a href="#sale">Sale</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <div class="search-box">
+                    <input type="text" placeholder="Search for clothes, brands, styles...">
+                    <span style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #666;">🔍</span>
+                </div>
+                <button class="cart-icon">
+                    🛒
+                    <span class="cart-count">2</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar - Model Controls -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Model Settings</h3>
+                <div class="model-controls">
+                    <div class="gender-selector">
+                        <button class="gender-option active" data-gender="male">Male</button>
+                        <button class="gender-option" data-gender="female">Female</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Skin Tone</h3>
+                <div class="skin-tone-grid">
+                    <div class="skin-tone" style="background: #fdbcb4;" data-tone="light"></div>
+                    <div class="skin-tone" style="background: #edb98a;" data-tone="medium"></div>
+                    <div class="skin-tone" style="background: #d08b5b;" data-tone="tan"></div>
+                    <div class="skin-tone active" style="background: #7a4825;" data-tone="brown"></div>
+                    <div class="skin-tone" style="background: #594a42;" data-tone="dark"></div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Body Measurements</h3>
+                <div class="model-controls">
+                    <div class="measurement-control">
+                        <label class="measurement-label">Height</label>
+                        <input type="range" class="measurement-slider" min="150" max="200" value="175" data-measurement="height">
+                        <div class="measurement-value">175 cm</div>
+                    </div>
+
+                    <div class="measurement-control">
+                        <label class="measurement-label">Weight</label>
+                        <input type="range" class="measurement-slider" min="40" max="150" value="70" data-measurement="weight">
+                        <div class="measurement-value">70 kg</div>
+                    </div>
+
+                    <div class="measurement-control">
+                        <label class="measurement-label">Chest</label>
+                        <input type="range" class="measurement-slider" min="80" max="140" value="95" data-measurement="chest">
+                        <div class="measurement-value">95 cm</div>
+                    </div>
+
+                    <div class="measurement-control">
+                        <label class="measurement-label">Waist</label>
+                        <input type="range" class="measurement-slider" min="60" max="120" value="80" data-measurement="waist">
+                        <div class="measurement-value">80 cm</div>
+                    </div>
+
+                    <div class="measurement-control">
+                        <label class="measurement-label">Hips</label>
+                        <input type="range" class="measurement-slider" min="80" max="140" value="95" data-measurement="hips">
+                        <div class="measurement-value">95 cm</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 3D Viewer -->
+        <main class="viewer-container">
+            <div class="viewer-overlay">
+                <div style="font-weight: 600; margin-bottom: 4px;">Virtual Try-On</div>
+                <div style="font-size: 13px; color: #666;">Drag to rotate • Scroll to zoom</div>
+            </div>
+
+            <canvas id="canvas3d" class="viewer-canvas"></canvas>
+
+            <div class="viewer-controls">
+                <button class="control-btn" id="resetView" title="Reset View">⌂</button>
+                <button class="control-btn" id="fullscreen" title="Fullscreen">⛶</button>
+                <button class="control-btn" id="snapshot" title="Take Photo">📷</button>
+                <button class="control-btn" id="share" title="Share">📤</button>
+            </div>
+
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <div>Loading 3D Model...</div>
+            </div>
+        </main>
+
+        <!-- Clothing Panel -->
+        <aside class="clothing-panel">
+            <div class="panel-header">
+                <h3 class="panel-title">Clothing</h3>
+                <button class="upload-btn" id="uploadClothing">Upload Item</button>
+            </div>
+
+            <div class="current-outfit">
+                <div class="outfit-title">Current Outfit</div>
+                <div class="outfit-items" id="currentOutfit">
+                    <div class="outfit-item">
+                        <span class="outfit-item-name">White T-Shirt</span>
+                        <button class="remove-item">✕</button>
+                    </div>
+                    <div class="outfit-item">
+                        <span class="outfit-item-name">Blue Jeans</span>
+                        <button class="remove-item">✕</button>
+                    </div>
+                </div>
+                <div class="outfit-actions">
+                    <button class="outfit-btn">Save Outfit</button>
+                    <button class="outfit-btn primary">Add to Cart</button>
+                </div>
+            </div>
+
+            <div class="clothing-categories">
+                <button class="category-tab active" data-category="all">All</button>
+                <button class="category-tab" data-category="tops">Tops</button>
+                <button class="category-tab" data-category="bottoms">Bottoms</button>
+                <button class="category-tab" data-category="dresses">Dresses</button>
+                <button class="category-tab" data-category="outerwear">Outerwear</button>
+                <button class="category-tab" data-category="shoes">Shoes</button>
+            </div>
+
+            <div class="clothing-grid" id="clothingGrid">
+                <!-- Clothing items will be populated by JavaScript -->
+            </div>
+        </aside>
+    </div>
+
+    <!-- Hidden file input for uploads -->
+    <input type="file" id="fileInput" style="display: none;" accept=".glb,.gltf,.fbx" multiple>
+
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <span id="notificationText"></span>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r160/three.min.js"></script>
+    <script src="src/virtual-dressing-room.js"></script>
+</body>
+</html>
