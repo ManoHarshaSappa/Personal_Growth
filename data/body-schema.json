@@ -1,0 +1,109 @@
+{
+  "version": "1.0",
+  "description": "Body measurements and care tracking schema",
+  "categories": {
+    "face": {
+      "measurements": {
+        "forehead_width": {"unit": "cm", "description": "Forehead width"},
+        "face_length": {"unit": "cm", "description": "Face length from forehead to chin"},
+        "jawline_width": {"unit": "cm", "description": "Jawline width"},
+        "cheekbone_width": {"unit": "cm", "description": "Cheekbone width"}
+      },
+      "skin_care": {
+        "skin_type": {"options": ["oily", "dry", "combination", "normal", "sensitive"]},
+        "acne_level": {"scale": "1-10", "description": "Acne severity 1=none, 10=severe"},
+        "skin_tone": {"description": "Skin color/tone"},
+        "moisture_level": {"scale": "1-10", "description": "Skin moisture 1=very dry, 10=very oily"}
+      }
+    },
+    "hair": {
+      "measurements": {
+        "length": {"unit": "cm", "description": "Hair length"},
+        "thickness": {"scale": "1-10", "description": "Hair thickness 1=thin, 10=very thick"},
+        "density": {"scale": "1-10", "description": "Hair density 1=sparse, 10=very dense"}
+      },
+      "health": {
+        "color": {"description": "Natural hair color"},
+        "texture": {"options": ["straight", "wavy", "curly", "coily"]},
+        "condition": {"scale": "1-10", "description": "Hair health 1=damaged, 10=excellent"},
+        "dandruff": {"scale": "1-10", "description": "Dandruff level 1=none, 10=severe"}
+      }
+    },
+    "eyes": {
+      "measurements": {
+        "eye_distance": {"unit": "cm", "description": "Distance between eyes"},
+        "eye_width": {"unit": "cm", "description": "Eye width"},
+        "eye_height": {"unit": "cm", "description": "Eye height"}
+      },
+      "health": {
+        "color": {"description": "Eye color"},
+        "vision_clarity": {"scale": "1-10", "description": "Vision clarity 1=poor, 10=excellent"},
+        "eye_bags": {"scale": "1-10", "description": "Under-eye bags 1=none, 10=severe"},
+        "redness": {"scale": "1-10", "description": "Eye redness 1=none, 10=severe"}
+      }
+    },
+    "body": {
+      "measurements": {
+        "height": {"unit": "cm", "description": "Total height"},
+        "weight": {"unit": "kg", "description": "Body weight"},
+        "chest_circumference": {"unit": "cm", "description": "Chest circumference"},
+        "waist_circumference": {"unit": "cm", "description": "Waist circumference"},
+        "hip_circumference": {"unit": "cm", "description": "Hip circumference"},
+        "shoulder_width": {"unit": "cm", "description": "Shoulder width"},
+        "neck_circumference": {"unit": "cm", "description": "Neck circumference"}
+      },
+      "fitness": {
+        "muscle_mass": {"scale": "1-10", "description": "Muscle mass 1=low, 10=high"},
+        "body_fat": {"unit": "%", "description": "Body fat percentage"},
+        "flexibility": {"scale": "1-10", "description": "Flexibility 1=poor, 10=excellent"},
+        "endurance": {"scale": "1-10", "description": "Endurance 1=poor, 10=excellent"}
+      }
+    },
+    "arms": {
+      "measurements": {
+        "arm_length": {"unit": "cm", "description": "Arm length (shoulder to fingertip)"},
+        "bicep_circumference": {"unit": "cm", "description": "Bicep circumference"},
+        "forearm_circumference": {"unit": "cm", "description": "Forearm circumference"},
+        "wrist_circumference": {"unit": "cm", "description": "Wrist circumference"}
+      },
+      "hands": {
+        "hand_length": {"unit": "cm", "description": "Hand length"},
+        "hand_width": {"unit": "cm", "description": "Hand width"},
+        "finger_length": {"unit": "cm", "description": "Middle finger length"},
+        "nail_health": {"scale": "1-10", "description": "Nail health 1=poor, 10=excellent"}
+      }
+    },
+    "legs": {
+      "measurements": {
+        "leg_length": {"unit": "cm", "description": "Leg length (hip to ankle)"},
+        "thigh_circumference": {"unit": "cm", "description": "Thigh circumference"},
+        "calf_circumference": {"unit": "cm", "description": "Calf circumference"},
+        "ankle_circumference": {"unit": "cm", "description": "Ankle circumference"}
+      },
+      "feet": {
+        "foot_length": {"unit": "cm", "description": "Foot length"},
+        "foot_width": {"unit": "cm", "description": "Foot width"},
+        "arch_height": {"unit": "cm", "description": "Arch height"},
+        "toe_nail_health": {"scale": "1-10", "description": "Toenail health 1=poor, 10=excellent"}
+      }
+    },
+    "back": {
+      "measurements": {
+        "back_width": {"unit": "cm", "description": "Back width at shoulders"},
+        "back_length": {"unit": "cm", "description": "Back length"},
+        "lower_back_curve": {"unit": "degrees", "description": "Lower back curve angle"}
+      },
+      "health": {
+        "posture": {"scale": "1-10", "description": "Posture quality 1=poor, 10=excellent"},
+        "flexibility": {"scale": "1-10", "description": "Back flexibility 1=stiff, 10=very flexible"},
+        "pain_level": {"scale": "1-10", "description": "Back pain 1=none, 10=severe"},
+        "muscle_tension": {"scale": "1-10", "description": "Muscle tension 1=relaxed, 10=very tense"}
+      }
+    }
+  },
+  "tracking": {
+    "date_format": "YYYY-MM-DD",
+    "measurement_frequency": "weekly",
+    "notes": "Additional observations and notes"
+  }
+}

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Launch Body Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .launch-container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 600px;
+        }
+        .launch-button {
+            display: inline-block;
+            padding: 20px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 20px;
+            transition: transform 0.3s ease;
+        }
+        .launch-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        .feature {
+            margin: 15px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="launch-container">
+        <h1>🏃‍♂️ Personal Body Tracker</h1>
+        <p>Track your complete body measurements and visualize with a 3D white mannequin</p>
+
+        <div class="feature">📊 Track Face, Hair, Eyes, Body, Arms, Legs & Back</div>
+        <div class="feature">🎭 3D White Mannequin Visualization</div>
+        <div class="feature">📈 Progress Tracking Over Time</div>
+        <div class="feature">🔐 Private Data Storage</div>
+
+        <a href="index.html" class="launch-button">
+            Launch Body Tracker →
+        </a>
+
+        <p><small>All data is stored locally and privately on your device</small></p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Body Care Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .data-input-panel, .visualization-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .panel-title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #4a5568;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .category-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .tab-button {
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .tab-button:hover, .tab-button.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .category-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .category-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .measurement-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .save-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .save-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .visualization-container {
+            height: 500px;
+            background: linear-gradient(145deg, #f0f0f0, #e8e8e8);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #ccc;
+        }
+
+        .placeholder-3d {
+            text-align: center;
+            color: #666;
+        }
+
+        .placeholder-3d h3 {
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .mannequin-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        .progress-tracking {
+            margin-top: 30px;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            grid-column: 1 / -1;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .measurement-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .category-tabs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Personal Body Care Tracker</h1>
+            <p>Track your body measurements and visualize your progress with a 3D mannequin</p>
+        </div>
+
+        <div class="main-layout">
+            <div class="data-input-panel">
+                <h2 class="panel-title">📊 Data Input</h2>
+
+                <div class="category-tabs">
+                    <button class="tab-button active" onclick="showCategory('face')">Face</button>
+                    <button class="tab-button" onclick="showCategory('hair')">Hair</button>
+                    <button class="tab-button" onclick="showCategory('eyes')">Eyes</button>
+                    <button class="tab-button" onclick="showCategory('body')">Body</button>
+                    <button class="tab-button" onclick="showCategory('arms')">Arms</button>
+                    <button class="tab-button" onclick="showCategory('legs')">Legs</button>
+                    <button class="tab-button" onclick="showCategory('back')">Back</button>
+                </div>
+
+                <div id="face-content" class="category-content active">
+                    <h3>Face Measurements & Care</h3>
+                    <div class="measurement-grid">
+                        <div class="input-group">
+                            <label>Forehead Width (cm)</label>
+                            <input type="number" step="0.1" id="forehead_width" placeholder="e.g., 12.5">
+                        </div>
+                        <div class="input-group">
+                            <label>Face Length (cm)</label>
+                            <input type="number" step="0.1" id="face_length" placeholder="e.g., 18.0">
+                        </div>
+                        <div class="input-group">
+                            <label>Jawline Width (cm)</label>
+                            <input type="number" step="0.1" id="jawline_width" placeholder="e.g., 14.0">
+                        </div>
+                        <div class="input-group">
+                            <label>Cheekbone Width (cm)</label>
+                            <input type="number" step="0.1" id="cheekbone_width" placeholder="e.g., 13.5">
+                        </div>
+                    </div>
+
+                    <h4 style="margin: 20px 0 15px;">Skin Care</h4>
+                    <div class="measurement-grid">
+                        <div class="input-group">
+                            <label>Skin Type</label>
+                            <select id="skin_type">
+                                <option value="">Select type</option>
+                                <option value="oily">Oily</option>
+                                <option value="dry">Dry</option>
+                                <option value="combination">Combination</option>
+                                <option value="normal">Normal</option>
+                                <option value="sensitive">Sensitive</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Acne Level (1-10)</label>
+                            <input type="range" min="1" max="10" id="acne_level" oninput="updateRangeValue(this)">
+                            <span id="acne_level_value">5</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional category contents will be added via JavaScript -->
+
+                <button class="save-button" onclick="saveData()">💾 Save Measurements</button>
+            </div>
+
+            <div class="visualization-panel">
+                <h2 class="panel-title">🎭 3D Mannequin Visualization</h2>
+                <div class="visualization-container">
+                    <div class="placeholder-3d">
+                        <div class="mannequin-icon">🏃‍♂️</div>
+                        <h3>3D Body Model</h3>
+                        <p>Generic white mannequin will appear here</p>
+                        <p>Based on your measurements</p>
+                        <small style="margin-top: 10px; display: block;">Enter measurements to see visualization</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="progress-tracking">
+            <h2 class="panel-title">📈 Progress Tracking</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="total-measurements">0</div>
+                    <div class="stat-label">Total Measurements</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="last-update">Never</div>
+                    <div class="stat-label">Last Updated</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="completion-rate">0%</div>
+                    <div class="stat-label">Data Completion</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="tracking-days">0</div>
+                    <div class="stat-label">Days Tracking</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="src/app.js"></script>
+    <script src="src/3d-visualization.js"></script>
+</body>
+</html>

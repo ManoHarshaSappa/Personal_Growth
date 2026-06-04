@@ -1,0 +1,108 @@
+{
+  "user_info": {
+    "created_date": "",
+    "last_updated": "",
+    "notes": "Personal body care tracking data"
+  },
+  "current_data": {
+    "face": {
+      "measurements": {
+        "forehead_width": null,
+        "face_length": null,
+        "jawline_width": null,
+        "cheekbone_width": null
+      },
+      "skin_care": {
+        "skin_type": null,
+        "acne_level": null,
+        "skin_tone": null,
+        "moisture_level": null
+      }
+    },
+    "hair": {
+      "measurements": {
+        "length": null,
+        "thickness": null,
+        "density": null
+      },
+      "health": {
+        "color": null,
+        "texture": null,
+        "condition": null,
+        "dandruff": null
+      }
+    },
+    "eyes": {
+      "measurements": {
+        "eye_distance": null,
+        "eye_width": null,
+        "eye_height": null
+      },
+      "health": {
+        "color": null,
+        "vision_clarity": null,
+        "eye_bags": null,
+        "redness": null
+      }
+    },
+    "body": {
+      "measurements": {
+        "height": null,
+        "weight": null,
+        "chest_circumference": null,
+        "waist_circumference": null,
+        "hip_circumference": null,
+        "shoulder_width": null,
+        "neck_circumference": null
+      },
+      "fitness": {
+        "muscle_mass": null,
+        "body_fat": null,
+        "flexibility": null,
+        "endurance": null
+      }
+    },
+    "arms": {
+      "measurements": {
+        "arm_length": null,
+        "bicep_circumference": null,
+        "forearm_circumference": null,
+        "wrist_circumference": null
+      },
+      "hands": {
+        "hand_length": null,
+        "hand_width": null,
+        "finger_length": null,
+        "nail_health": null
+      }
+    },
+    "legs": {
+      "measurements": {
+        "leg_length": null,
+        "thigh_circumference": null,
+        "calf_circumference": null,
+        "ankle_circumference": null
+      },
+      "feet": {
+        "foot_length": null,
+        "foot_width": null,
+        "arch_height": null,
+        "toe_nail_health": null
+      }
+    },
+    "back": {
+      "measurements": {
+        "back_width": null,
+        "back_length": null,
+        "lower_back_curve": null
+      },
+      "health": {
+        "posture": null,
+        "flexibility": null,
+        "pain_level": null,
+        "muscle_tension": null
+      }
+    }
+  },
+  "history": []
+}
