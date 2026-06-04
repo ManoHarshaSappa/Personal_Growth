@@ -1,17 +1,18 @@
-// 3D Mannequin Visualization using Three.js
+// Enhanced 3D Male Body Structure Visualization
 class BodyVisualization {
     constructor() {
         this.scene = null;
         this.camera = null;
         this.renderer = null;
-        this.mannequin = null;
-        this.controls = null;
+        this.bodyModel = null;
+        this.bodyParts = {};
+        this.skinColor = new THREE.Color('#7a4825'); // Harsha's skin tone
         this.init();
     }
 
     init() {
         this.setupScene();
-        this.createMannequin();
+        this.createMaleBodyStructure();
         this.setupLighting();
         this.setupControls();
         this.animate();
@@ -25,22 +26,26 @@ class BodyVisualization {
 
         // Create scene
         this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color(0xf5f5f5);
+        this.scene.background = new THREE.Color(0xf8f8f8);
 
         // Create camera
         this.camera = new THREE.PerspectiveCamera(
-            75,
+            50,
             container.clientWidth / container.clientHeight,
             0.1,
             1000
         );
-        this.camera.position.set(0, 1, 3);
+        this.camera.position.set(0, 1.6, 4);
 
         // Create renderer
-        this.renderer = new THREE.WebGLRenderer({ antialias: true });
+        this.renderer = new THREE.WebGLRenderer({
+            antialias: true,
+            alpha: true
+        });
         this.renderer.setSize(container.clientWidth, container.clientHeight);
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        this.renderer.setClearColor(0x000000, 0);
 
         // Replace placeholder content
         container.innerHTML = '';
@@ -50,143 +55,169 @@ class BodyVisualization {
         window.addEventListener('resize', () => this.handleResize());
     }
 
-    createMannequin() {
-        const mannequinGroup = new THREE.Group();
+    createMaleBodyStructure() {
+        const bodyGroup = new THREE.Group();
 
-        // Materials
-        const bodyMaterial = new THREE.MeshLambertMaterial({
-            color: 0xf8f8f8,
+        // Body material with Harsha's skin tone
+        const bodyMaterial = new THREE.MeshPhongMaterial({
+            color: this.skinColor,
+            shininess: 10,
             transparent: true,
             opacity: 0.95
         });
 
-        const jointMaterial = new THREE.MeshLambertMaterial({
-            color: 0xe0e0e0
+        const jointMaterial = new THREE.MeshPhongMaterial({
+            color: this.skinColor.clone().multiplyScalar(0.8),
+            shininess: 15
         });
 
-        // Head
-        const headGeometry = new THREE.SphereGeometry(0.12, 16, 16);
+        // === HEAD (Simple sphere) ===
+        const headGeometry = new THREE.SphereGeometry(0.14, 16, 16);
         const head = new THREE.Mesh(headGeometry, bodyMaterial);
-        head.position.y = 1.7;
+        head.position.y = 1.75;
         head.castShadow = true;
-        mannequinGroup.add(head);
+        head.name = 'head';
+        bodyGroup.add(head);
 
-        // Neck
-        const neckGeometry = new THREE.CylinderGeometry(0.05, 0.06, 0.15, 8);
+        // === NECK ===
+        const neckGeometry = new THREE.CylinderGeometry(0.06, 0.07, 0.15, 12);
         const neck = new THREE.Mesh(neckGeometry, bodyMaterial);
-        neck.position.y = 1.55;
+        neck.position.y = 1.6;
         neck.castShadow = true;
-        mannequinGroup.add(neck);
+        neck.name = 'neck';
+        bodyGroup.add(neck);
 
-        // Torso
-        const torsoGeometry = new THREE.BoxGeometry(0.35, 0.6, 0.2);
-        const torso = new THREE.Mesh(torsoGeometry, bodyMaterial);
-        torso.position.y = 1.2;
-        torso.castShadow = true;
-        mannequinGroup.add(torso);
+        // === UPPER TORSO (Chest) ===
+        const chestGeometry = new THREE.BoxGeometry(0.4, 0.35, 0.22);
+        const chest = new THREE.Mesh(chestGeometry, bodyMaterial);
+        chest.position.y = 1.35;
+        chest.castShadow = true;
+        chest.name = 'chest';
+        bodyGroup.add(chest);
 
-        // Shoulder joints
-        const shoulderGeometry = new THREE.SphereGeometry(0.04, 8, 8);
-        const leftShoulder = new THREE.Mesh(shoulderGeometry, jointMaterial);
-        leftShoulder.position.set(-0.2, 1.45, 0);
-        const rightShoulder = new THREE.Mesh(shoulderGeometry, jointMaterial);
-        rightShoulder.position.set(0.2, 1.45, 0);
-        mannequinGroup.add(leftShoulder, rightShoulder);
+        // === MIDDLE TORSO (Abdomen) ===
+        const abdomenGeometry = new THREE.BoxGeometry(0.35, 0.25, 0.2);
+        const abdomen = new THREE.Mesh(abdomenGeometry, bodyMaterial);
+        abdomen.position.y = 1.05;
+        abdomen.castShadow = true;
+        abdomen.name = 'abdomen';
+        bodyGroup.add(abdomen);
 
-        // Arms - Upper
-        const upperArmGeometry = new THREE.CylinderGeometry(0.04, 0.05, 0.3, 8);
-        const leftUpperArm = new THREE.Mesh(upperArmGeometry, bodyMaterial);
-        leftUpperArm.position.set(-0.25, 1.25, 0);
-        leftUpperArm.castShadow = true;
-        const rightUpperArm = new THREE.Mesh(upperArmGeometry, bodyMaterial);
-        rightUpperArm.position.set(0.25, 1.25, 0);
-        rightUpperArm.castShadow = true;
-        mannequinGroup.add(leftUpperArm, rightUpperArm);
-
-        // Elbow joints
-        const elbowGeometry = new THREE.SphereGeometry(0.03, 8, 8);
-        const leftElbow = new THREE.Mesh(elbowGeometry, jointMaterial);
-        leftElbow.position.set(-0.25, 1.05, 0);
-        const rightElbow = new THREE.Mesh(elbowGeometry, jointMaterial);
-        rightElbow.position.set(0.25, 1.05, 0);
-        mannequinGroup.add(leftElbow, rightElbow);
-
-        // Arms - Forearm
-        const forearmGeometry = new THREE.CylinderGeometry(0.035, 0.04, 0.25, 8);
-        const leftForearm = new THREE.Mesh(forearmGeometry, bodyMaterial);
-        leftForearm.position.set(-0.25, 0.85, 0);
-        leftForearm.castShadow = true;
-        const rightForearm = new THREE.Mesh(forearmGeometry, bodyMaterial);
-        rightForearm.position.set(0.25, 0.85, 0);
-        rightForearm.castShadow = true;
-        mannequinGroup.add(leftForearm, rightForearm);
-
-        // Hands
-        const handGeometry = new THREE.BoxGeometry(0.06, 0.12, 0.03);
-        const leftHand = new THREE.Mesh(handGeometry, bodyMaterial);
-        leftHand.position.set(-0.25, 0.7, 0);
-        leftHand.castShadow = true;
-        const rightHand = new THREE.Mesh(handGeometry, bodyMaterial);
-        rightHand.position.set(0.25, 0.7, 0);
-        rightHand.castShadow = true;
-        mannequinGroup.add(leftHand, rightHand);
-
-        // Waist
-        const waistGeometry = new THREE.CylinderGeometry(0.12, 0.15, 0.1, 8);
+        // === LOWER TORSO (Waist/Hips) ===
+        const waistGeometry = new THREE.BoxGeometry(0.38, 0.2, 0.22);
         const waist = new THREE.Mesh(waistGeometry, bodyMaterial);
         waist.position.y = 0.85;
         waist.castShadow = true;
-        mannequinGroup.add(waist);
+        waist.name = 'waist';
+        bodyGroup.add(waist);
 
-        // Hip joints
-        const hipGeometry = new THREE.SphereGeometry(0.04, 8, 8);
+        // === SHOULDERS ===
+        const shoulderGeometry = new THREE.SphereGeometry(0.05, 12, 12);
+        const leftShoulder = new THREE.Mesh(shoulderGeometry, jointMaterial);
+        leftShoulder.position.set(-0.25, 1.5, 0);
+        const rightShoulder = new THREE.Mesh(shoulderGeometry, jointMaterial);
+        rightShoulder.position.set(0.25, 1.5, 0);
+        bodyGroup.add(leftShoulder, rightShoulder);
+
+        // === ARMS - Upper Arms ===
+        const upperArmGeometry = new THREE.CylinderGeometry(0.05, 0.06, 0.32, 12);
+        const leftUpperArm = new THREE.Mesh(upperArmGeometry, bodyMaterial);
+        leftUpperArm.position.set(-0.3, 1.25, 0);
+        leftUpperArm.castShadow = true;
+        leftUpperArm.name = 'leftUpperArm';
+        const rightUpperArm = new THREE.Mesh(upperArmGeometry, bodyMaterial);
+        rightUpperArm.position.set(0.3, 1.25, 0);
+        rightUpperArm.castShadow = true;
+        rightUpperArm.name = 'rightUpperArm';
+        bodyGroup.add(leftUpperArm, rightUpperArm);
+
+        // === ELBOWS ===
+        const elbowGeometry = new THREE.SphereGeometry(0.04, 10, 10);
+        const leftElbow = new THREE.Mesh(elbowGeometry, jointMaterial);
+        leftElbow.position.set(-0.3, 1.05, 0);
+        const rightElbow = new THREE.Mesh(elbowGeometry, jointMaterial);
+        rightElbow.position.set(0.3, 1.05, 0);
+        bodyGroup.add(leftElbow, rightElbow);
+
+        // === FOREARMS ===
+        const forearmGeometry = new THREE.CylinderGeometry(0.04, 0.05, 0.28, 12);
+        const leftForearm = new THREE.Mesh(forearmGeometry, bodyMaterial);
+        leftForearm.position.set(-0.3, 0.85, 0);
+        leftForearm.castShadow = true;
+        leftForearm.name = 'leftForearm';
+        const rightForearm = new THREE.Mesh(forearmGeometry, bodyMaterial);
+        rightForearm.position.set(0.3, 0.85, 0);
+        rightForearm.castShadow = true;
+        rightForearm.name = 'rightForearm';
+        bodyGroup.add(leftForearm, rightForearm);
+
+        // === HANDS ===
+        const handGeometry = new THREE.BoxGeometry(0.08, 0.12, 0.04);
+        const leftHand = new THREE.Mesh(handGeometry, bodyMaterial);
+        leftHand.position.set(-0.3, 0.68, 0);
+        leftHand.castShadow = true;
+        leftHand.name = 'leftHand';
+        const rightHand = new THREE.Mesh(handGeometry, bodyMaterial);
+        rightHand.position.set(0.3, 0.68, 0);
+        rightHand.castShadow = true;
+        rightHand.name = 'rightHand';
+        bodyGroup.add(leftHand, rightHand);
+
+        // === HIP JOINTS ===
+        const hipGeometry = new THREE.SphereGeometry(0.05, 12, 12);
         const leftHip = new THREE.Mesh(hipGeometry, jointMaterial);
-        leftHip.position.set(-0.08, 0.75, 0);
+        leftHip.position.set(-0.1, 0.72, 0);
         const rightHip = new THREE.Mesh(hipGeometry, jointMaterial);
-        rightHip.position.set(0.08, 0.75, 0);
-        mannequinGroup.add(leftHip, rightHip);
+        rightHip.position.set(0.1, 0.72, 0);
+        bodyGroup.add(leftHip, rightHip);
 
-        // Thighs
-        const thighGeometry = new THREE.CylinderGeometry(0.06, 0.07, 0.4, 8);
+        // === THIGHS ===
+        const thighGeometry = new THREE.CylinderGeometry(0.07, 0.08, 0.45, 12);
         const leftThigh = new THREE.Mesh(thighGeometry, bodyMaterial);
-        leftThigh.position.set(-0.08, 0.5, 0);
+        leftThigh.position.set(-0.1, 0.45, 0);
         leftThigh.castShadow = true;
+        leftThigh.name = 'leftThigh';
         const rightThigh = new THREE.Mesh(thighGeometry, bodyMaterial);
-        rightThigh.position.set(0.08, 0.5, 0);
+        rightThigh.position.set(0.1, 0.45, 0);
         rightThigh.castShadow = true;
-        mannequinGroup.add(leftThigh, rightThigh);
+        rightThigh.name = 'rightThigh';
+        bodyGroup.add(leftThigh, rightThigh);
 
-        // Knee joints
-        const kneeGeometry = new THREE.SphereGeometry(0.03, 8, 8);
+        // === KNEES ===
+        const kneeGeometry = new THREE.SphereGeometry(0.04, 10, 10);
         const leftKnee = new THREE.Mesh(kneeGeometry, jointMaterial);
-        leftKnee.position.set(-0.08, 0.25, 0);
+        leftKnee.position.set(-0.1, 0.18, 0);
         const rightKnee = new THREE.Mesh(kneeGeometry, jointMaterial);
-        rightKnee.position.set(0.08, 0.25, 0);
-        mannequinGroup.add(leftKnee, rightKnee);
+        rightKnee.position.set(0.1, 0.18, 0);
+        bodyGroup.add(leftKnee, rightKnee);
 
-        // Calves
-        const calfGeometry = new THREE.CylinderGeometry(0.04, 0.05, 0.35, 8);
+        // === CALVES ===
+        const calfGeometry = new THREE.CylinderGeometry(0.05, 0.06, 0.38, 12);
         const leftCalf = new THREE.Mesh(calfGeometry, bodyMaterial);
-        leftCalf.position.set(-0.08, 0.05, 0);
+        leftCalf.position.set(-0.1, -0.05, 0);
         leftCalf.castShadow = true;
+        leftCalf.name = 'leftCalf';
         const rightCalf = new THREE.Mesh(calfGeometry, bodyMaterial);
-        rightCalf.position.set(0.08, 0.05, 0);
+        rightCalf.position.set(0.1, -0.05, 0);
         rightCalf.castShadow = true;
-        mannequinGroup.add(leftCalf, rightCalf);
+        rightCalf.name = 'rightCalf';
+        bodyGroup.add(leftCalf, rightCalf);
 
-        // Feet
-        const footGeometry = new THREE.BoxGeometry(0.08, 0.04, 0.15);
+        // === FEET ===
+        const footGeometry = new THREE.BoxGeometry(0.08, 0.05, 0.18);
         const leftFoot = new THREE.Mesh(footGeometry, bodyMaterial);
-        leftFoot.position.set(-0.08, -0.15, 0.05);
+        leftFoot.position.set(-0.1, -0.26, 0.06);
         leftFoot.castShadow = true;
+        leftFoot.name = 'leftFoot';
         const rightFoot = new THREE.Mesh(footGeometry, bodyMaterial);
-        rightFoot.position.set(0.08, -0.15, 0.05);
+        rightFoot.position.set(0.1, -0.26, 0.06);
         rightFoot.castShadow = true;
-        mannequinGroup.add(leftFoot, rightFoot);
+        rightFoot.name = 'rightFoot';
+        bodyGroup.add(leftFoot, rightFoot);
 
-        // Store references for updates
-        this.mannequinParts = {
-            head, neck, torso, waist,
+        // Store body parts for scaling
+        this.bodyParts = {
+            head, neck, chest, abdomen, waist,
             leftUpperArm, rightUpperArm,
             leftForearm, rightForearm,
             leftHand, rightHand,
@@ -195,47 +226,56 @@ class BodyVisualization {
             leftFoot, rightFoot
         };
 
-        this.mannequin = mannequinGroup;
-        this.scene.add(mannequinGroup);
+        this.bodyModel = bodyGroup;
+        this.scene.add(bodyGroup);
 
-        // Add a platform
-        const platformGeometry = new THREE.CylinderGeometry(0.8, 0.8, 0.02, 32);
-        const platformMaterial = new THREE.MeshLambertMaterial({ color: 0xdddddd });
+        // Add a simple platform
+        const platformGeometry = new THREE.CylinderGeometry(1.2, 1.2, 0.03, 32);
+        const platformMaterial = new THREE.MeshPhongMaterial({
+            color: 0xe8e8e8,
+            shininess: 5
+        });
         const platform = new THREE.Mesh(platformGeometry, platformMaterial);
-        platform.position.y = -0.2;
+        platform.position.y = -0.3;
         platform.receiveShadow = true;
         this.scene.add(platform);
     }
 
     setupLighting() {
         // Ambient light
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
         this.scene.add(ambientLight);
 
-        // Main directional light
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        directionalLight.position.set(2, 4, 2);
-        directionalLight.castShadow = true;
-        directionalLight.shadow.mapSize.width = 1024;
-        directionalLight.shadow.mapSize.height = 1024;
-        this.scene.add(directionalLight);
+        // Main directional light (warm lighting for Harsha's skin tone)
+        const mainLight = new THREE.DirectionalLight(0xfff8e1, 1.2);
+        mainLight.position.set(3, 5, 3);
+        mainLight.castShadow = true;
+        mainLight.shadow.mapSize.width = 2048;
+        mainLight.shadow.mapSize.height = 2048;
+        mainLight.shadow.camera.near = 0.1;
+        mainLight.shadow.camera.far = 20;
+        mainLight.shadow.camera.left = -3;
+        mainLight.shadow.camera.right = 3;
+        mainLight.shadow.camera.top = 3;
+        mainLight.shadow.camera.bottom = -3;
+        this.scene.add(mainLight);
 
-        // Fill light
-        const fillLight = new THREE.DirectionalLight(0xffffff, 0.3);
-        fillLight.position.set(-2, 2, -2);
+        // Fill light (softer, cooler)
+        const fillLight = new THREE.DirectionalLight(0xb3e5fc, 0.4);
+        fillLight.position.set(-2, 3, -2);
         this.scene.add(fillLight);
 
-        // Rim light
-        const rimLight = new THREE.DirectionalLight(0xffffff, 0.2);
-        rimLight.position.set(0, 2, -3);
+        // Rim light for definition
+        const rimLight = new THREE.DirectionalLight(0xffffff, 0.3);
+        rimLight.position.set(0, 2, -4);
         this.scene.add(rimLight);
     }
 
     setupControls() {
-        // Simple mouse controls for orbiting
+        let isMouseDown = false;
         let mouseX = 0;
         let mouseY = 0;
-        let isMouseDown = false;
+        let rotationSpeed = 0.005;
 
         const container = this.renderer.domElement;
 
@@ -243,6 +283,7 @@ class BodyVisualization {
             isMouseDown = true;
             mouseX = event.clientX;
             mouseY = event.clientY;
+            container.style.cursor = 'grabbing';
         });
 
         container.addEventListener('mousemove', (event) => {
@@ -251,8 +292,11 @@ class BodyVisualization {
             const deltaX = event.clientX - mouseX;
             const deltaY = event.clientY - mouseY;
 
-            this.mannequin.rotation.y += deltaX * 0.01;
-            this.mannequin.rotation.x += deltaY * 0.01;
+            this.bodyModel.rotation.y += deltaX * rotationSpeed;
+            this.bodyModel.rotation.x += deltaY * rotationSpeed;
+
+            // Limit vertical rotation
+            this.bodyModel.rotation.x = Math.max(-Math.PI/3, Math.min(Math.PI/3, this.bodyModel.rotation.x));
 
             mouseX = event.clientX;
             mouseY = event.clientY;
@@ -260,70 +304,126 @@ class BodyVisualization {
 
         container.addEventListener('mouseup', () => {
             isMouseDown = false;
+            container.style.cursor = 'grab';
         });
 
+        container.addEventListener('mouseleave', () => {
+            isMouseDown = false;
+            container.style.cursor = 'grab';
+        });
+
+        // Mouse wheel for zooming
         container.addEventListener('wheel', (event) => {
-            const zoom = event.deltaY * 0.001;
+            event.preventDefault();
+            const zoom = event.deltaY * 0.002;
             this.camera.position.z += zoom;
-            this.camera.position.z = Math.max(1.5, Math.min(5, this.camera.position.z));
+            this.camera.position.z = Math.max(2, Math.min(8, this.camera.position.z));
+        });
+
+        container.style.cursor = 'grab';
+
+        // Touch controls for mobile
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        container.addEventListener('touchstart', (event) => {
+            const touch = event.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+        });
+
+        container.addEventListener('touchmove', (event) => {
+            event.preventDefault();
+            const touch = event.touches[0];
+            const deltaX = touch.clientX - touchStartX;
+            const deltaY = touch.clientY - touchStartY;
+
+            this.bodyModel.rotation.y += deltaX * rotationSpeed;
+            this.bodyModel.rotation.x += deltaY * rotationSpeed;
+
+            this.bodyModel.rotation.x = Math.max(-Math.PI/3, Math.min(Math.PI/3, this.bodyModel.rotation.x));
+
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
         });
     }
 
     updateModel(bodyData) {
-        if (!this.mannequinParts || !bodyData) return;
+        if (!this.bodyParts || !bodyData) return;
 
-        // Update proportions based on measurements
+        // Get measurements
         const body = bodyData.body?.measurements || {};
         const arms = bodyData.arms?.measurements || {};
         const legs = bodyData.legs?.measurements || {};
 
-        // Scale factors based on measurements
-        const heightFactor = body.height ? body.height / 175 : 1; // Normalize to 175cm
-        const chestFactor = body.chest_circumference ? body.chest_circumference / 95 : 1;
-        const waistFactor = body.waist_circumference ? body.waist_circumference / 80 : 1;
+        // Calculate scale factors (normalized to average male proportions)
+        const heightFactor = body.height ? body.height / 175 : 1; // Average 175cm
+        const chestFactor = body.chest_circumference ? body.chest_circumference / 100 : 1;
+        const waistFactor = body.waist_circumference ? body.waist_circumference / 85 : 1;
+        const shoulderFactor = body.shoulder_width ? body.shoulder_width / 45 : 1;
 
-        // Update torso
-        if (this.mannequinParts.torso) {
-            this.mannequinParts.torso.scale.set(
+        // Scale the entire model based on height
+        this.bodyModel.scale.setScalar(heightFactor);
+
+        // Scale chest area
+        if (this.bodyParts.chest) {
+            this.bodyParts.chest.scale.set(
                 chestFactor,
-                heightFactor * 0.8,
+                1,
                 chestFactor * 0.8
             );
         }
 
-        // Update waist
-        if (this.mannequinParts.waist) {
-            this.mannequinParts.waist.scale.set(
-                waistFactor,
+        // Scale waist
+        if (this.bodyParts.waist && this.bodyParts.abdomen) {
+            this.bodyParts.waist.scale.set(waistFactor, 1, waistFactor * 0.8);
+            this.bodyParts.abdomen.scale.set(
+                (chestFactor + waistFactor) / 2,
                 1,
-                waistFactor
+                (chestFactor + waistFactor) / 2 * 0.8
             );
         }
 
-        // Update overall height
-        if (this.mannequin) {
-            this.mannequin.scale.setScalar(heightFactor);
+        // Scale arms based on measurements
+        if (arms.bicep_circumference) {
+            const armScale = arms.bicep_circumference / 32; // Average 32cm
+            if (this.bodyParts.leftUpperArm && this.bodyParts.rightUpperArm) {
+                this.bodyParts.leftUpperArm.scale.set(armScale, 1, armScale);
+                this.bodyParts.rightUpperArm.scale.set(armScale, 1, armScale);
+            }
         }
 
-        // Update muscle mass visualization
-        const fitness = bodyData.body?.fitness || {};
-        if (fitness.muscle_mass) {
-            const muscleFactor = 0.8 + (fitness.muscle_mass / 10) * 0.4;
-
-            // Scale arms and legs slightly based on muscle mass
-            Object.values(this.mannequinParts).forEach(part => {
-                if (part.userData && part.userData.type === 'muscle') {
-                    part.scale.setScalar(muscleFactor);
-                }
-            });
+        if (arms.forearm_circumference) {
+            const forearmScale = arms.forearm_circumference / 27; // Average 27cm
+            if (this.bodyParts.leftForearm && this.bodyParts.rightForearm) {
+                this.bodyParts.leftForearm.scale.set(forearmScale, 1, forearmScale);
+                this.bodyParts.rightForearm.scale.set(forearmScale, 1, forearmScale);
+            }
         }
 
-        // Add visual feedback for data completeness
-        this.updateVisualFeedback(bodyData);
+        // Scale legs based on measurements
+        if (legs.thigh_circumference) {
+            const thighScale = legs.thigh_circumference / 55; // Average 55cm
+            if (this.bodyParts.leftThigh && this.bodyParts.rightThigh) {
+                this.bodyParts.leftThigh.scale.set(thighScale, 1, thighScale);
+                this.bodyParts.rightThigh.scale.set(thighScale, 1, thighScale);
+            }
+        }
+
+        if (legs.calf_circumference) {
+            const calfScale = legs.calf_circumference / 36; // Average 36cm
+            if (this.bodyParts.leftCalf && this.bodyParts.rightCalf) {
+                this.bodyParts.leftCalf.scale.set(calfScale, 1, calfScale);
+                this.bodyParts.rightCalf.scale.set(calfScale, 1, calfScale);
+            }
+        }
+
+        // Update visual feedback
+        this.updateCompletionFeedback(bodyData);
     }
 
-    updateVisualFeedback(bodyData) {
-        // Change mannequin color based on data completeness
+    updateCompletionFeedback(bodyData) {
+        // Calculate data completeness
         let totalFields = 0;
         let filledFields = 0;
 
@@ -344,56 +444,33 @@ class BodyVisualization {
 
         const completeness = totalFields > 0 ? filledFields / totalFields : 0;
 
-        // Color from red (incomplete) to green (complete)
-        const hue = completeness * 0.3; // 0 = red, 0.3 = green
-        const color = new THREE.Color().setHSL(hue, 0.3, 0.9);
+        // Update body color based on completeness
+        const baseColor = this.skinColor.clone();
+        if (completeness > 0.7) {
+            // High completion - slightly brighter
+            baseColor.multiplyScalar(1.1);
+        } else if (completeness > 0.3) {
+            // Medium completion - normal
+            baseColor.multiplyScalar(1.0);
+        } else {
+            // Low completion - slightly darker
+            baseColor.multiplyScalar(0.9);
+        }
 
-        // Update all body parts color
-        Object.values(this.mannequinParts).forEach(part => {
+        // Apply color to all body parts
+        Object.values(this.bodyParts).forEach(part => {
             if (part.material) {
-                part.material.color = color;
+                part.material.color = baseColor;
             }
         });
-
-        // Add floating text showing completion percentage
-        this.updateCompletionText(Math.round(completeness * 100));
-    }
-
-    updateCompletionText(percentage) {
-        // Remove existing text
-        const existingText = this.scene.getObjectByName('completionText');
-        if (existingText) {
-            this.scene.remove(existingText);
-        }
-
-        // Create new text (using basic geometry for simplicity)
-        const textGeometry = new THREE.RingGeometry(0.02, 0.04, 8);
-        const textMaterial = new THREE.MeshBasicMaterial({ color: 0x333333 });
-        const textMesh = new THREE.Mesh(textGeometry, textMaterial);
-        textMesh.position.set(0, 2.2, 0);
-        textMesh.name = 'completionText';
-        this.scene.add(textMesh);
-
-        // Add percentage indicator with rings
-        const rings = Math.floor(percentage / 10);
-        for (let i = 0; i < rings; i++) {
-            const ring = new THREE.Mesh(
-                new THREE.RingGeometry(0.15 + i * 0.02, 0.17 + i * 0.02, 16),
-                new THREE.MeshBasicMaterial({ color: 0x4CAF50 })
-            );
-            ring.position.set(0, 2.3, 0);
-            ring.rotation.x = -Math.PI / 2;
-            ring.name = `completionRing${i}`;
-            this.scene.add(ring);
-        }
     }
 
     animate() {
         requestAnimationFrame(() => this.animate());
 
-        // Subtle rotation animation
-        if (this.mannequin) {
-            this.mannequin.rotation.y += 0.002;
+        // Subtle auto-rotation when not being controlled
+        if (this.bodyModel) {
+            this.bodyModel.rotation.y += 0.003;
         }
 
         this.renderer.render(this.scene, this.camera);
@@ -418,24 +495,25 @@ function loadThreeJS() {
         return;
     }
 
-    // Create a simple 3D visualization using basic shapes
-    // This is a fallback if Three.js is not available
+    // Fallback visualization if Three.js fails to load
     const container = document.querySelector('.visualization-container');
     container.innerHTML = `
-        <div style="text-align: center; padding: 20px;">
-            <div style="font-size: 3em; margin-bottom: 15px;">🏃‍♂️</div>
-            <h3>3D Mannequin Preview</h3>
-            <div style="background: #f0f0f0; border-radius: 10px; padding: 20px; margin: 20px 0;">
-                <div id="mannequin-stats">
-                    <p><strong>Height:</strong> <span id="display-height">Not set</span></p>
-                    <p><strong>Weight:</strong> <span id="display-weight">Not set</span></p>
-                    <p><strong>Chest:</strong> <span id="display-chest">Not set</span></p>
-                    <p><strong>Waist:</strong> <span id="display-waist">Not set</span></p>
+        <div style="text-align: center; padding: 30px; background: linear-gradient(145deg, #f0f0f0, #e0e0e0); border-radius: 15px;">
+            <div style="font-size: 4em; margin-bottom: 20px; color: #7a4825;">🏃‍♂️</div>
+            <h3 style="color: #333; margin-bottom: 20px;">3D Male Body Structure</h3>
+            <div style="background: white; border-radius: 10px; padding: 25px; margin: 20px 0; border: 2px solid #7a4825;">
+                <div id="body-stats" style="text-align: left;">
+                    <h4 style="color: #7a4825; margin-bottom: 15px;">📊 Current Measurements:</h4>
+                    <p><strong>Height:</strong> <span id="display-height" style="color: #7a4825;">Not set</span></p>
+                    <p><strong>Weight:</strong> <span id="display-weight" style="color: #7a4825;">Not set</span></p>
+                    <p><strong>Chest:</strong> <span id="display-chest" style="color: #7a4825;">Not set</span></p>
+                    <p><strong>Waist:</strong> <span id="display-waist" style="color: #7a4825;">Not set</span></p>
+                    <p><strong>Shoulders:</strong> <span id="display-shoulders" style="color: #7a4825;">Not set</span></p>
                 </div>
             </div>
-            <p style="font-size: 0.9em; color: #666;">
-                Enter measurements to see basic stats<br>
-                <small>Full 3D visualization requires Three.js</small>
+            <p style="color: #666; font-size: 0.9em;">
+                <strong>Skin Tone:</strong> Deep warm brown (#7a4825)<br>
+                <small>Enter measurements to see proportional adjustments</small>
             </p>
         </div>
     `;
@@ -453,6 +531,8 @@ function loadThreeJS() {
                 body.chest_circumference ? `${body.chest_circumference} cm` : 'Not set';
             document.getElementById('display-waist').textContent =
                 body.waist_circumference ? `${body.waist_circumference} cm` : 'Not set';
+            document.getElementById('display-shoulders').textContent =
+                body.shoulder_width ? `${body.shoulder_width} cm` : 'Not set';
         }
     };
 }
@@ -463,7 +543,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const script = document.createElement('script');
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
     script.onload = () => {
-        setTimeout(() => new BodyVisualization(), 100);
+        setTimeout(() => new BodyVisualization(), 200);
     };
     script.onerror = () => {
         loadThreeJS(); // Fallback visualization
