@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Human Model</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #f5f5f5;
+            font-family: Arial, sans-serif;
+        }
+
+        #canvas3d {
+            width: 100vw;
+            height: 100vh;
+            display: block;
+            cursor: grab;
+        }
+
+        #canvas3d:active {
+            cursor: grabbing;
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #666;
+            z-index: 10;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #e0e0e0;
+            border-top: 4px solid #7a4825;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading.hidden {
+            display: none;
+        }
+
+        /* Subtle info overlay - can be removed if not needed */
+        .info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #666;
+            backdrop-filter: blur(10px);
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .info:hover {
+            opacity: 1;
+        }
+
+        /* Hide scrollbars */
+        body::-webkit-scrollbar {
+            display: none;
+        }
+
+        body {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading indicator -->
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <div>Loading 3D Model...</div>
+    </div>
+
+    <!-- Full screen 3D canvas -->
+    <canvas id="canvas3d"></canvas>
+
+    <!-- Optional info (can be removed) -->
+    <div class="info">
+        Drag to rotate • Scroll to zoom
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r160/three.min.js"></script>
+    <script>
+        class Simple3DHuman {
+            constructor() {
+                this.scene = null;
+                this.camera = null;
+                this.renderer = null;
+                this.canvas = null;
+                this.humanModel = null;
+                this.bodyParts = {};
+                this.skinColor = new THREE.Color('#7a4825'); // Your skin tone
+
+                this.init();
+            }
+
+            async init() {
+                try {
+                    this.setupScene();
+                    this.createRealisticHuman();
+                    this.setupLighting();
+                    this.setupControls();
+                    this.animate();
+                    this.hideLoading();
+                } catch (error) {
+                    console.error('Failed to initialize 3D model:', error);
+                    this.hideLoading();
+                }
+            }
+
+            setupScene() {
+                // Get canvas
+                this.canvas = document.getElementById('canvas3d');
+
+                // Create scene
+                this.scene = new THREE.Scene();
+                this.scene.background = new THREE.Color(0xf5f5f5);
+
+                // Create camera
+                this.camera = new THREE.PerspectiveCamera(
+                    50,
+                    window.innerWidth / window.innerHeight,
+                    0.1,
+                    1000
+                );
+                this.camera.position.set(0, 1.6, 3);
+
+                // Create renderer
+                this.renderer = new THREE.WebGLRenderer({
+                    canvas: this.canvas,
+                    antialias: true,
+                    alpha: true
+                });
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                this.renderer.shadowMap.enabled = true;
+                this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+                this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+                // Handle resize
+                window.addEventListener('resize', () => this.handleResize());
+            }
+
+            setupLighting() {
+                // Ambient light
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+                this.scene.add(ambientLight);
+
+                // Main directional light (optimized for your skin tone)
+                const keyLight = new THREE.DirectionalLight(0xfff8e1, 1.0);
+                keyLight.position.set(2, 4, 3);
+                keyLight.castShadow = true;
+                keyLight.shadow.mapSize.width = 2048;
+                keyLight.shadow.mapSize.height = 2048;
+                keyLight.shadow.camera.near = 0.1;
+                keyLight.shadow.camera.far = 10;
+                keyLight.shadow.camera.left = -3;
+                keyLight.shadow.camera.right = 3;
+                keyLight.shadow.camera.top = 3;
+                keyLight.shadow.camera.bottom = -3;
+                this.scene.add(keyLight);
+
+                // Fill light
+                const fillLight = new THREE.DirectionalLight(0xb3e5fc, 0.3);
+                fillLight.position.set(-2, 3, -2);
+                this.scene.add(fillLight);
+
+                // Rim light
+                const rimLight = new THREE.DirectionalLight(0xffffff, 0.2);
+                rimLight.position.set(0, 2, -4);
+                this.scene.add(rimLight);
+
+                // Environment light
+                const hemiLight = new THREE.HemisphereLight(0x87CEEB, 0x98FB98, 0.3);
+                this.scene.add(hemiLight);
+            }
+
+            createRealisticHuman() {
+                const humanGroup = new THREE.Group();
+
+                // Create realistic skin material
+                const skinMaterial = new THREE.MeshPhysicalMaterial({
+                    color: this.skinColor,
+                    roughness: 0.4,
+                    metalness: 0.0,
+                    clearcoat: 0.1,
+                    clearcoatRoughness: 0.1,
+                    sheen: 0.5,
+                    sheenRoughness: 0.5,
+                    sheenColor: this.skinColor.clone().multiplyScalar(0.5),
+                    transparent: true,
+                    opacity: 0.98
+                });
+
+                // Create body parts
+                this.bodyParts = this.createBodyParts(skinMaterial);
+
+                // Add all parts to the group
+                Object.values(this.bodyParts).forEach(part => {
+                    if (part) humanGroup.add(part);
+                });
+
+                this.humanModel = humanGroup;
+                this.scene.add(humanGroup);
+
+                // Add subtle floor reflection
+                this.createFloor();
+            }
+
+            createBodyParts(skinMaterial) {
+                const parts = {};
+
+                // Head - realistic proportions
+                const headGeometry = new THREE.SphereGeometry(0.12, 32, 24);
+                headGeometry.scale(1, 1.1, 0.8);
+                parts.head = new THREE.Mesh(headGeometry, skinMaterial);
+                parts.head.position.y = 1.68;
+                parts.head.castShadow = true;
+
+                // Neck
+                const neckGeometry = new THREE.CylinderGeometry(0.05, 0.06, 0.12, 16);
+                parts.neck = new THREE.Mesh(neckGeometry, skinMaterial);
+                parts.neck.position.y = 1.55;
+                parts.neck.castShadow = true;
+
+                // Torso - anatomical shape
+                const torsoGeometry = new THREE.CapsuleGeometry(0.15, 0.4, 8, 16);
+                torsoGeometry.scale(1.4, 1, 1);
+                parts.torso = new THREE.Mesh(torsoGeometry, skinMaterial);
+                parts.torso.position.y = 1.2;
+                parts.torso.castShadow = true;
+
+                // Abdomen
+                const abdomenGeometry = new THREE.CapsuleGeometry(0.12, 0.25, 8, 16);
+                abdomenGeometry.scale(1.2, 1, 1);
+                parts.abdomen = new THREE.Mesh(abdomenGeometry, skinMaterial);
+                parts.abdomen.position.y = 0.85;
+                parts.abdomen.castShadow = true;
+
+                // Pelvis
+                const pelvisGeometry = new THREE.CapsuleGeometry(0.14, 0.15, 8, 16);
+                pelvisGeometry.scale(1.1, 1, 1.2);
+                parts.pelvis = new THREE.Mesh(pelvisGeometry, skinMaterial);
+                parts.pelvis.position.y = 0.65;
+                parts.pelvis.castShadow = true;
+
+                // Arms
+                this.createArms(parts, skinMaterial);
+
+                // Legs
+                this.createLegs(parts, skinMaterial);
+
+                return parts;
+            }
+
+            createArms(parts, skinMaterial) {
+                // Upper arms
+                const upperArmGeometry = new THREE.CapsuleGeometry(0.04, 0.25, 8, 16);
+
+                parts.leftUpperArm = new THREE.Mesh(upperArmGeometry, skinMaterial);
+                parts.leftUpperArm.position.set(-0.25, 1.3, 0);
+                parts.leftUpperArm.rotation.z = 0.2;
+                parts.leftUpperArm.castShadow = true;
+
+                parts.rightUpperArm = new THREE.Mesh(upperArmGeometry, skinMaterial);
+                parts.rightUpperArm.position.set(0.25, 1.3, 0);
+                parts.rightUpperArm.rotation.z = -0.2;
+                parts.rightUpperArm.castShadow = true;
+
+                // Forearms
+                const forearmGeometry = new THREE.CapsuleGeometry(0.035, 0.22, 8, 16);
+
+                parts.leftForearm = new THREE.Mesh(forearmGeometry, skinMaterial);
+                parts.leftForearm.position.set(-0.32, 1.0, 0.05);
+                parts.leftForearm.rotation.z = 0.1;
+                parts.leftForearm.castShadow = true;
+
+                parts.rightForearm = new THREE.Mesh(forearmGeometry, skinMaterial);
+                parts.rightForearm.position.set(0.32, 1.0, 0.05);
+                parts.rightForearm.rotation.z = -0.1;
+                parts.rightForearm.castShadow = true;
+
+                // Hands
+                const handGeometry = new THREE.CapsuleGeometry(0.03, 0.08, 8, 12);
+                handGeometry.scale(1.2, 1, 0.6);
+
+                parts.leftHand = new THREE.Mesh(handGeometry, skinMaterial);
+                parts.leftHand.position.set(-0.35, 0.8, 0.08);
+                parts.leftHand.castShadow = true;
+
+                parts.rightHand = new THREE.Mesh(handGeometry, skinMaterial);
+                parts.rightHand.position.set(0.35, 0.8, 0.08);
+                parts.rightHand.castShadow = true;
+            }
+
+            createLegs(parts, skinMaterial) {
+                // Thighs
+                const thighGeometry = new THREE.CapsuleGeometry(0.06, 0.35, 8, 16);
+
+                parts.leftThigh = new THREE.Mesh(thighGeometry, skinMaterial);
+                parts.leftThigh.position.set(-0.08, 0.35, 0);
+                parts.leftThigh.castShadow = true;
+
+                parts.rightThigh = new THREE.Mesh(thighGeometry, skinMaterial);
+                parts.rightThigh.position.set(0.08, 0.35, 0);
+                parts.rightThigh.castShadow = true;
+
+                // Shins
+                const shinGeometry = new THREE.CapsuleGeometry(0.04, 0.32, 8, 16);
+
+                parts.leftShin = new THREE.Mesh(shinGeometry, skinMaterial);
+                parts.leftShin.position.set(-0.08, 0.0, 0);
+                parts.leftShin.castShadow = true;
+
+                parts.rightShin = new THREE.Mesh(shinGeometry, skinMaterial);
+                parts.rightShin.position.set(0.08, 0.0, 0);
+                parts.rightShin.castShadow = true;
+
+                // Feet
+                const footGeometry = new THREE.CapsuleGeometry(0.035, 0.08, 8, 12);
+                footGeometry.scale(1, 0.6, 2);
+
+                parts.leftFoot = new THREE.Mesh(footGeometry, skinMaterial);
+                parts.leftFoot.position.set(-0.08, -0.18, 0.04);
+                parts.leftFoot.castShadow = true;
+
+                parts.rightFoot = new THREE.Mesh(footGeometry, skinMaterial);
+                parts.rightFoot.position.set(0.08, -0.18, 0.04);
+                parts.rightFoot.castShadow = true;
+            }
+
+            createFloor() {
+                const floorGeometry = new THREE.CircleGeometry(5, 32);
+                const floorMaterial = new THREE.MeshLambertMaterial({
+                    color: 0xffffff,
+                    transparent: true,
+                    opacity: 0.1
+                });
+                const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+                floor.rotation.x = -Math.PI / 2;
+                floor.position.y = -0.01;
+                floor.receiveShadow = true;
+                this.scene.add(floor);
+            }
+
+            setupControls() {
+                let isMouseDown = false;
+                let mouseX = 0;
+                let mouseY = 0;
+                this.targetRotationY = 0;
+                this.targetRotationX = 0;
+
+                // Mouse controls
+                this.canvas.addEventListener('mousedown', (event) => {
+                    isMouseDown = true;
+                    mouseX = event.clientX;
+                    mouseY = event.clientY;
+                });
+
+                this.canvas.addEventListener('mousemove', (event) => {
+                    if (!isMouseDown) return;
+
+                    const deltaX = event.clientX - mouseX;
+                    const deltaY = event.clientY - mouseY;
+
+                    this.targetRotationY += deltaX * 0.01;
+                    this.targetRotationX += deltaY * 0.01;
+
+                    // Limit vertical rotation
+                    this.targetRotationX = Math.max(-Math.PI/4, Math.min(Math.PI/4, this.targetRotationX));
+
+                    mouseX = event.clientX;
+                    mouseY = event.clientY;
+                });
+
+                this.canvas.addEventListener('mouseup', () => {
+                    isMouseDown = false;
+                });
+
+                this.canvas.addEventListener('mouseleave', () => {
+                    isMouseDown = false;
+                });
+
+                // Mouse wheel for zoom
+                this.canvas.addEventListener('wheel', (event) => {
+                    event.preventDefault();
+                    const zoom = event.deltaY * 0.001;
+                    this.camera.position.z += zoom;
+                    this.camera.position.z = Math.max(1.5, Math.min(6, this.camera.position.z));
+                });
+
+                // Touch controls
+                this.setupTouchControls();
+            }
+
+            setupTouchControls() {
+                let touchStartX = 0;
+                let touchStartY = 0;
+                let isTouching = false;
+
+                this.canvas.addEventListener('touchstart', (event) => {
+                    event.preventDefault();
+                    isTouching = true;
+                    const touch = event.touches[0];
+                    touchStartX = touch.clientX;
+                    touchStartY = touch.clientY;
+                });
+
+                this.canvas.addEventListener('touchmove', (event) => {
+                    event.preventDefault();
+                    if (!isTouching) return;
+
+                    const touch = event.touches[0];
+                    const deltaX = touch.clientX - touchStartX;
+                    const deltaY = touch.clientY - touchStartY;
+
+                    this.targetRotationY += deltaX * 0.01;
+                    this.targetRotationX += deltaY * 0.01;
+                    this.targetRotationX = Math.max(-Math.PI/4, Math.min(Math.PI/4, this.targetRotationX));
+
+                    touchStartX = touch.clientX;
+                    touchStartY = touch.clientY;
+                });
+
+                this.canvas.addEventListener('touchend', () => {
+                    isTouching = false;
+                });
+            }
+
+            animate() {
+                requestAnimationFrame(() => this.animate());
+
+                // Smooth rotation
+                if (this.humanModel) {
+                    this.humanModel.rotation.y += (this.targetRotationY - this.humanModel.rotation.y) * 0.1;
+                    this.humanModel.rotation.x += (this.targetRotationX - this.humanModel.rotation.x) * 0.1;
+
+                    // Subtle breathing animation
+                    const time = Date.now() * 0.0005;
+                    if (this.bodyParts.torso) {
+                        this.bodyParts.torso.scale.z = 1 + Math.sin(time) * 0.02;
+                    }
+                }
+
+                this.renderer.render(this.scene, this.camera);
+            }
+
+            handleResize() {
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+
+                this.camera.aspect = width / height;
+                this.camera.updateProjectionMatrix();
+                this.renderer.setSize(width, height);
+            }
+
+            hideLoading() {
+                const loading = document.getElementById('loading');
+                loading.classList.add('hidden');
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new Simple3DHuman();
+        });
+    </script>
+</body>
+</html>
