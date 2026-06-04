@@ -114,6 +114,7 @@ class BodyTracker {
     generateCategoryContent() {
         const categories = {
             hair: this.generateHairContent(),
+            beard: this.generateBeardContent(),
             eyes: this.generateEyesContent(),
             body: this.generateBodyContent(),
             arms: this.generateArmsContent(),
@@ -135,44 +136,199 @@ class BodyTracker {
 
     generateHairContent() {
         return `
-            <h3>Hair Measurements & Health</h3>
+            <h3>💇‍♂️ Complete Hair Analysis</h3>
+
+            <h4 style="margin: 20px 0 15px;">Hair Measurements</h4>
             <div class="measurement-grid">
                 <div class="input-group">
-                    <label>Hair Length (cm)</label>
-                    <input type="number" step="0.1" id="length" placeholder="e.g., 25.0">
+                    <label>Length on Top (cm)</label>
+                    <input type="number" step="0.1" id="length_top" value="3.5" placeholder="e.g., 3.5">
                 </div>
                 <div class="input-group">
                     <label>Hair Thickness (1-10)</label>
-                    <input type="range" min="1" max="10" id="thickness" oninput="updateRangeValue(this)">
-                    <span id="thickness_value">5</span>
+                    <input type="range" min="1" max="10" id="hair_thickness" value="8" oninput="updateRangeValue(this)">
+                    <span id="hair_thickness_value">8</span>
                 </div>
                 <div class="input-group">
                     <label>Hair Density (1-10)</label>
-                    <input type="range" min="1" max="10" id="density" oninput="updateRangeValue(this)">
-                    <span id="density_value">5</span>
+                    <input type="range" min="1" max="10" id="hair_density" value="9" oninput="updateRangeValue(this)">
+                    <span id="hair_density_value">9</span>
                 </div>
                 <div class="input-group">
-                    <label>Hair Color</label>
-                    <input type="text" id="color" placeholder="e.g., Black, Brown, Blonde">
+                    <label>Volume (1-10)</label>
+                    <input type="range" min="1" max="10" id="hair_volume" value="9" oninput="updateRangeValue(this)">
+                    <span id="hair_volume_value">9</span>
                 </div>
             </div>
-            <h4 style="margin: 20px 0 15px;">Hair Health</h4>
+
+            <h4 style="margin: 20px 0 15px;">Hair Analysis</h4>
             <div class="measurement-grid">
                 <div class="input-group">
-                    <label>Texture</label>
-                    <select id="texture">
-                        <option value="">Select texture</option>
-                        <option value="straight">Straight</option>
-                        <option value="wavy">Wavy</option>
-                        <option value="curly">Curly</option>
-                        <option value="coily">Coily</option>
+                    <label>Hair Color</label>
+                    <input type="text" id="hair_color" value="dark brown-black (near-black base, slight olive-brown in light)" placeholder="Detailed color description">
+                </div>
+                <div class="input-group">
+                    <label>Color Hex Code</label>
+                    <input type="text" id="hair_color_hex" value="#1a0f0a" placeholder="e.g., #1a0f0a">
+                </div>
+                <div class="input-group">
+                    <label>Texture Type</label>
+                    <select id="texture_type">
+                        <option value="">Select type</option>
+                        <option value="1A">1A - Straight, fine</option>
+                        <option value="1B">1B - Straight, medium</option>
+                        <option value="1C">1C - Straight, coarse</option>
+                        <option value="2A">2A - Wavy, fine</option>
+                        <option value="2B" selected>2B - Wavy, medium</option>
+                        <option value="2C">2C - Wavy, coarse</option>
+                        <option value="3A">3A - Curly, fine</option>
+                        <option value="3B">3B - Curly, medium</option>
+                        <option value="3C">3C - Curly, coarse</option>
+                        <option value="4A">4A - Kinky, fine</option>
+                        <option value="4B">4B - Kinky, medium</option>
+                        <option value="4C">4C - Kinky, coarse</option>
                     </select>
                 </div>
                 <div class="input-group">
-                    <label>Condition (1-10)</label>
-                    <input type="range" min="1" max="10" id="condition" oninput="updateRangeValue(this)">
-                    <span id="condition_value">5</span>
+                    <label>Current Style</label>
+                    <input type="text" id="current_hair_style" value="natural grown-out top, unstructured" placeholder="Current haircut description">
                 </div>
+            </div>
+
+            <h4 style="margin: 20px 0 15px;">Hair Health</h4>
+            <div class="measurement-grid">
+                <div class="input-group">
+                    <label>Condition (1-10)</label>
+                    <input type="range" min="1" max="10" id="hair_condition" value="8" oninput="updateRangeValue(this)">
+                    <span id="hair_condition_value">8</span>
+                </div>
+                <div class="input-group">
+                    <label>Dandruff Level (1-10)</label>
+                    <input type="range" min="1" max="10" id="hair_dandruff" value="1" oninput="updateRangeValue(this)">
+                    <span id="hair_dandruff_value">1</span>
+                </div>
+                <div class="input-group">
+                    <label>Damage Level (1-10)</label>
+                    <input type="range" min="1" max="10" id="hair_damage" value="2" oninput="updateRangeValue(this)">
+                    <span id="hair_damage_value">2</span>
+                </div>
+                <div class="input-group">
+                    <label>Thinning Areas</label>
+                    <input type="text" id="thinning_areas" value="none" placeholder="e.g., crown, temples, none">
+                </div>
+            </div>
+
+            <h4 style="margin: 20px 0 15px;">Professional Recommendations</h4>
+            <div class="input-group">
+                <label>Recommended Cuts</label>
+                <textarea id="recommended_cuts" rows="3" placeholder="Best haircut styles for face shape and texture">1) Textured curly crop - keep natural curl on top, tight fade on sides
+2) Modern quiff/wavy quiff - push volume forward and up
+3) Mid-fade with volume on top
+4) Edgar cut (curly) - blunt fringe version</textarea>
+            </div>
+            <div class="input-group">
+                <label>Product Recommendations</label>
+                <textarea id="hair_product_recommendations" rows="2" placeholder="Best products for hair type">Light curl cream or sea salt spray to define 2B/2C waves without weighing them down. Avoid heavy gels that flatten natural texture.</textarea>
+            </div>
+            <div class="input-group">
+                <label>Styling Tips</label>
+                <textarea id="hair_styling_tips" rows="2" placeholder="How to style for best results">Style with product to define curls before recording/photos. HeyGen captures texture well when defined, not fluffy.</textarea>
+            </div>
+        `;
+    }
+
+    generateBeardContent() {
+        return `
+            <h3>🧔 Beard Analysis & Care</h3>
+
+            <h4 style="margin: 20px 0 15px;">Current Beard Style</h4>
+            <div class="measurement-grid">
+                <div class="input-group">
+                    <label>Beard Style</label>
+                    <input type="text" id="beard_style" value="medium stubble / short beard" placeholder="e.g., Medium stubble, full beard, goatee">
+                </div>
+                <div class="input-group">
+                    <label>Growth Stage</label>
+                    <input type="text" id="growth_stage" value="~2-3 weeks" placeholder="e.g., 2-3 weeks, 1 month">
+                </div>
+                <div class="input-group">
+                    <label>Beard Color</label>
+                    <input type="text" id="beard_color" value="dark brown, uniform" placeholder="e.g., Dark brown, black, mixed colors">
+                </div>
+                <div class="input-group">
+                    <label>Beard Density (1-10)</label>
+                    <input type="range" min="1" max="10" id="beard_density" value="8" oninput="updateRangeValue(this)">
+                    <span id="beard_density_value">8</span>
+                </div>
+            </div>
+
+            <h4 style="margin: 20px 0 15px;">Coverage Areas</h4>
+            <div class="measurement-grid">
+                <div class="input-group">
+                    <label>Chin Coverage (1-10)</label>
+                    <input type="range" min="1" max="10" id="chin_coverage" value="9" oninput="updateRangeValue(this)">
+                    <span id="chin_coverage_value">9</span>
+                </div>
+                <div class="input-group">
+                    <label>Cheek Coverage (1-10)</label>
+                    <input type="range" min="1" max="10" id="cheek_coverage" value="7" oninput="updateRangeValue(this)">
+                    <span id="cheek_coverage_value">7</span>
+                </div>
+                <div class="input-group">
+                    <label>Mustache Coverage (1-10)</label>
+                    <input type="range" min="1" max="10" id="mustache_coverage" value="8" oninput="updateRangeValue(this)">
+                    <span id="mustache_coverage_value">8</span>
+                </div>
+                <div class="input-group">
+                    <label>Neck Coverage (1-10)</label>
+                    <input type="range" min="1" max="10" id="neck_coverage" value="8" oninput="updateRangeValue(this)">
+                    <span id="neck_coverage_value">8</span>
+                </div>
+            </div>
+
+            <h4 style="margin: 20px 0 15px;">Maintenance Status</h4>
+            <div class="measurement-grid">
+                <div class="input-group">
+                    <label>Neckline Defined</label>
+                    <select id="neckline_defined">
+                        <option value="">Select status</option>
+                        <option value="yes">Yes, clean</option>
+                        <option value="no" selected>No, needs work</option>
+                        <option value="needs_work">Partially defined</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Cheek Line Defined</label>
+                    <select id="cheek_line_defined">
+                        <option value="">Select status</option>
+                        <option value="yes">Yes, clean</option>
+                        <option value="no" selected>No, needs work</option>
+                        <option value="needs_work">Partially defined</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Trimming Frequency</label>
+                    <input type="text" id="trimming_frequency" value="irregular" placeholder="e.g., Weekly, bi-weekly, monthly">
+                </div>
+                <div class="input-group">
+                    <label>Current Products</label>
+                    <input type="text" id="beard_products_used" value="none" placeholder="e.g., Beard oil, trimmer, none">
+                </div>
+            </div>
+
+            <h4 style="margin: 20px 0 15px;">Professional Recommendations</h4>
+            <div class="input-group">
+                <label>Style Suggestions</label>
+                <textarea id="beard_style_suggestions" rows="3" placeholder="Recommended beard styles for your face shape">1) Maintain current stage with clean edges for polished medium stubble
+2) Grow to full short beard (4-5 weeks) for more jaw definition
+3) Corporate stubble (3-5mm all over) for professional content</textarea>
+            </div>
+            <div class="input-group">
+                <label>Grooming Tips</label>
+                <textarea id="beard_grooming_tips" rows="3" placeholder="Professional grooming recommendations">1) Define neckline 1-2 fingers above adam's apple
+2) Sharpen cheek line - gentle diagonal from sideburn to mustache corner
+3) Keep chin full for face shape
+4) Clean up before recording sessions</textarea>
             </div>
         `;
     }

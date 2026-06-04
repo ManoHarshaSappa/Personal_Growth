@@ -3,30 +3,126 @@
   "description": "Body measurements and care tracking schema",
   "categories": {
     "face": {
+      "shape_analysis": {
+        "face_shape": {"options": ["round", "oval", "square", "heart", "diamond", "oblong", "round-oval"], "description": "Overall face shape"},
+        "forehead_type": {"options": ["narrow", "medium", "broad"], "description": "Forehead width relative to face"},
+        "forehead_height": {"options": ["low", "medium", "high"], "description": "Forehead height"},
+        "cheekbones": {"options": ["flat", "medium", "prominent", "full"], "description": "Cheekbone prominence"},
+        "jawline_type": {"options": ["sharp", "rounded", "soft", "square", "defined"], "description": "Jawline definition"},
+        "chin_type": {"options": ["pointed", "rounded", "square", "recessed", "prominent"], "description": "Chin shape"},
+        "face_proportions": {"description": "Width to length ratio and notes"}
+      },
       "measurements": {
         "forehead_width": {"unit": "cm", "description": "Forehead width"},
         "face_length": {"unit": "cm", "description": "Face length from forehead to chin"},
         "jawline_width": {"unit": "cm", "description": "Jawline width"},
-        "cheekbone_width": {"unit": "cm", "description": "Cheekbone width"}
+        "cheekbone_width": {"unit": "cm", "description": "Cheekbone width"},
+        "chin_width": {"unit": "cm", "description": "Chin width"},
+        "nose_width": {"unit": "cm", "description": "Nose width at nostrils"},
+        "nose_length": {"unit": "cm", "description": "Nose length from bridge to tip"},
+        "lip_width": {"unit": "cm", "description": "Lip width"}
       },
-      "skin_care": {
-        "skin_type": {"options": ["oily", "dry", "combination", "normal", "sensitive"]},
+      "facial_features": {
+        "eye_color": {"description": "Detailed eye color"},
+        "eye_shape": {"options": ["almond", "round", "hooded", "monolid", "upturned", "downturned"], "description": "Eye shape"},
+        "eyebrow_type": {"options": ["thin", "medium", "thick"], "description": "Eyebrow thickness"},
+        "eyebrow_shape": {"options": ["arched", "straight", "rounded", "angular"], "description": "Eyebrow arch"},
+        "nose_type": {"options": ["straight", "aquiline", "button", "broad", "narrow", "roman"], "description": "Nose shape"},
+        "nose_tip": {"options": ["pointed", "rounded", "bulbous", "refined"], "description": "Nose tip shape"},
+        "lip_fullness": {"options": ["thin", "medium", "full", "very full"], "description": "Lip thickness"},
+        "lip_shape": {"options": ["defined", "soft", "bow-shaped", "straight"], "description": "Lip definition"},
+        "ear_size": {"options": ["small", "medium", "large"], "description": "Ear size relative to head"},
+        "ear_position": {"options": ["close", "medium", "prominent"], "description": "How much ears stick out"}
+      },
+      "skin_analysis": {
+        "skin_tone": {"description": "Detailed skin color description"},
+        "fitzpatrick_scale": {"options": ["I", "II", "III", "IV", "V", "VI"], "description": "Fitzpatrick skin classification"},
+        "undertone": {"options": ["warm", "cool", "neutral", "golden-warm", "pink-cool", "olive"], "description": "Skin undertone"},
+        "hex_color": {"description": "Approximate hex color code for skin tone"},
+        "skin_type": {"options": ["oily", "dry", "combination", "normal", "sensitive"], "description": "Skin type for care"},
         "acne_level": {"scale": "1-10", "description": "Acne severity 1=none, 10=severe"},
-        "skin_tone": {"description": "Skin color/tone"},
-        "moisture_level": {"scale": "1-10", "description": "Skin moisture 1=very dry, 10=very oily"}
+        "moisture_level": {"scale": "1-10", "description": "Skin moisture 1=very dry, 10=very oily"},
+        "sun_damage": {"scale": "1-10", "description": "Sun damage level 1=none, 10=severe"},
+        "aging_signs": {"description": "Notes on wrinkles, lines, age spots"}
+      },
+      "color_recommendations": {
+        "best_clothing_colors": {"description": "Colors that complement skin tone"},
+        "avoid_colors": {"description": "Colors to avoid"},
+        "jewelry_metals": {"options": ["gold", "silver", "rose-gold", "mixed"], "description": "Best metal colors"},
+        "hair_color_options": {"description": "Recommended hair colors"}
+      },
+      "styling_notes": {
+        "face_shape_tips": {"description": "Styling tips for face shape"},
+        "feature_enhancement": {"description": "How to enhance best features"},
+        "camera_angles": {"description": "Best angles for photos/video"},
+        "lighting_tips": {"description": "Best lighting for skin tone"}
       }
     },
     "hair": {
       "measurements": {
-        "length": {"unit": "cm", "description": "Hair length"},
+        "length_top": {"unit": "cm", "description": "Hair length on top"},
+        "length_sides": {"unit": "cm", "description": "Hair length on sides"},
+        "length_back": {"unit": "cm", "description": "Hair length at back"},
         "thickness": {"scale": "1-10", "description": "Hair thickness 1=thin, 10=very thick"},
-        "density": {"scale": "1-10", "description": "Hair density 1=sparse, 10=very dense"}
+        "density": {"scale": "1-10", "description": "Hair density 1=sparse, 10=very dense"},
+        "volume": {"scale": "1-10", "description": "Natural volume 1=flat, 10=very voluminous"}
+      },
+      "analysis": {
+        "color": {"description": "Natural hair color with detailed description"},
+        "color_hex": {"description": "Approximate hex color code"},
+        "texture_type": {"options": ["1A", "1B", "1C", "2A", "2B", "2C", "3A", "3B", "3C", "4A", "4B", "4C"], "description": "Hair texture classification"},
+        "texture_description": {"description": "Detailed texture description"},
+        "current_style": {"description": "Current haircut and style"},
+        "growth_pattern": {"description": "How hair grows and natural patterns"},
+        "cowlicks": {"description": "Location and direction of cowlicks"}
       },
       "health": {
-        "color": {"description": "Natural hair color"},
-        "texture": {"options": ["straight", "wavy", "curly", "coily"]},
         "condition": {"scale": "1-10", "description": "Hair health 1=damaged, 10=excellent"},
-        "dandruff": {"scale": "1-10", "description": "Dandruff level 1=none, 10=severe"}
+        "dandruff": {"scale": "1-10", "description": "Dandruff level 1=none, 10=severe"},
+        "oiliness": {"scale": "1-10", "description": "Scalp oiliness 1=dry, 10=very oily"},
+        "damage_level": {"scale": "1-10", "description": "Chemical/heat damage 1=none, 10=severe"},
+        "thinning_areas": {"description": "Any areas with thinning or hair loss"}
+      },
+      "styling": {
+        "recommended_cuts": {"description": "Best haircut styles for face shape and texture"},
+        "product_recommendations": {"description": "Best products for hair type"},
+        "styling_tips": {"description": "How to style for best results"},
+        "maintenance_schedule": {"description": "How often to cut and maintain"}
+      }
+    },
+    "beard": {
+      "measurements": {
+        "length_chin": {"unit": "mm", "description": "Beard length at chin"},
+        "length_sides": {"unit": "mm", "description": "Beard length on sides"},
+        "mustache_length": {"unit": "mm", "description": "Mustache length"},
+        "coverage_area": {"description": "Areas with beard growth"}
+      },
+      "analysis": {
+        "style": {"description": "Current beard style"},
+        "growth_stage": {"description": "Estimated weeks of growth"},
+        "color": {"description": "Beard color compared to hair"},
+        "density": {"scale": "1-10", "description": "Beard density 1=sparse, 10=very dense"},
+        "growth_pattern": {"description": "How beard grows and fills in"},
+        "texture": {"description": "Beard hair texture"}
+      },
+      "coverage": {
+        "chin_coverage": {"scale": "1-10", "description": "Coverage on chin 1=patchy, 10=full"},
+        "cheek_coverage": {"scale": "1-10", "description": "Coverage on cheeks 1=patchy, 10=full"},
+        "mustache_coverage": {"scale": "1-10", "description": "Mustache coverage 1=patchy, 10=full"},
+        "neck_coverage": {"scale": "1-10", "description": "Neck area coverage 1=patchy, 10=full"},
+        "sideburn_connection": {"description": "How well beard connects to sideburns"}
+      },
+      "maintenance": {
+        "neckline_defined": {"options": ["yes", "no", "needs_work"], "description": "Is neckline properly defined"},
+        "cheek_line_defined": {"options": ["yes", "no", "needs_work"], "description": "Is cheek line clean"},
+        "trimming_frequency": {"description": "How often beard is trimmed"},
+        "products_used": {"description": "Beard care products currently used"}
+      },
+      "recommendations": {
+        "style_suggestions": {"description": "Recommended beard styles for face shape"},
+        "grooming_tips": {"description": "How to improve beard appearance"},
+        "product_recommendations": {"description": "Recommended beard care products"},
+        "maintenance_schedule": {"description": "Optimal grooming routine"}
       }
     },
     "eyes": {

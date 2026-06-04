@@ -240,6 +240,7 @@
                 <div class="category-tabs">
                     <button class="tab-button active" onclick="showCategory('face')">Face</button>
                     <button class="tab-button" onclick="showCategory('hair')">Hair</button>
+                    <button class="tab-button" onclick="showCategory('beard')">Beard</button>
                     <button class="tab-button" onclick="showCategory('eyes')">Eyes</button>
                     <button class="tab-button" onclick="showCategory('body')">Body</button>
                     <button class="tab-button" onclick="showCategory('arms')">Arms</button>
@@ -248,44 +249,144 @@
                 </div>
 
                 <div id="face-content" class="category-content active">
-                    <h3>Face Measurements & Care</h3>
-                    <div class="measurement-grid">
-                        <div class="input-group">
-                            <label>Forehead Width (cm)</label>
-                            <input type="number" step="0.1" id="forehead_width" placeholder="e.g., 12.5">
-                        </div>
-                        <div class="input-group">
-                            <label>Face Length (cm)</label>
-                            <input type="number" step="0.1" id="face_length" placeholder="e.g., 18.0">
-                        </div>
-                        <div class="input-group">
-                            <label>Jawline Width (cm)</label>
-                            <input type="number" step="0.1" id="jawline_width" placeholder="e.g., 14.0">
-                        </div>
-                        <div class="input-group">
-                            <label>Cheekbone Width (cm)</label>
-                            <input type="number" step="0.1" id="cheekbone_width" placeholder="e.g., 13.5">
-                        </div>
-                    </div>
+                    <h3>🎭 Complete Face Analysis</h3>
 
-                    <h4 style="margin: 20px 0 15px;">Skin Care</h4>
+                    <h4 style="margin: 20px 0 15px;">Face Shape Analysis</h4>
                     <div class="measurement-grid">
                         <div class="input-group">
-                            <label>Skin Type</label>
-                            <select id="skin_type">
-                                <option value="">Select type</option>
-                                <option value="oily">Oily</option>
-                                <option value="dry">Dry</option>
-                                <option value="combination">Combination</option>
-                                <option value="normal">Normal</option>
-                                <option value="sensitive">Sensitive</option>
+                            <label>Face Shape</label>
+                            <select id="face_shape">
+                                <option value="">Select shape</option>
+                                <option value="round">Round</option>
+                                <option value="oval">Oval</option>
+                                <option value="square">Square</option>
+                                <option value="heart">Heart</option>
+                                <option value="diamond">Diamond</option>
+                                <option value="oblong">Oblong</option>
+                                <option value="round-oval" selected>Round-Oval</option>
                             </select>
                         </div>
                         <div class="input-group">
-                            <label>Acne Level (1-10)</label>
-                            <input type="range" min="1" max="10" id="acne_level" oninput="updateRangeValue(this)">
-                            <span id="acne_level_value">5</span>
+                            <label>Forehead Type</label>
+                            <select id="forehead_type">
+                                <option value="">Select type</option>
+                                <option value="narrow">Narrow</option>
+                                <option value="medium">Medium</option>
+                                <option value="broad" selected>Broad</option>
+                            </select>
                         </div>
+                        <div class="input-group">
+                            <label>Cheekbones</label>
+                            <select id="cheekbones">
+                                <option value="">Select type</option>
+                                <option value="flat">Flat</option>
+                                <option value="medium">Medium</option>
+                                <option value="prominent" selected>Prominent</option>
+                                <option value="full">Full</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Jawline Type</label>
+                            <select id="jawline_type">
+                                <option value="">Select type</option>
+                                <option value="sharp">Sharp</option>
+                                <option value="rounded" selected>Rounded</option>
+                                <option value="soft">Soft</option>
+                                <option value="square">Square</option>
+                                <option value="defined">Defined</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h4 style="margin: 20px 0 15px;">Facial Features</h4>
+                    <div class="measurement-grid">
+                        <div class="input-group">
+                            <label>Eye Color & Description</label>
+                            <input type="text" id="eye_color" value="dark espresso brown, almond-shaped" placeholder="e.g., Dark brown, almond-shaped">
+                        </div>
+                        <div class="input-group">
+                            <label>Eye Shape</label>
+                            <select id="eye_shape">
+                                <option value="">Select shape</option>
+                                <option value="almond" selected>Almond</option>
+                                <option value="round">Round</option>
+                                <option value="hooded">Hooded</option>
+                                <option value="monolid">Monolid</option>
+                                <option value="upturned">Upturned</option>
+                                <option value="downturned">Downturned</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Eyebrow Type</label>
+                            <select id="eyebrow_type">
+                                <option value="">Select type</option>
+                                <option value="thin">Thin</option>
+                                <option value="medium">Medium</option>
+                                <option value="thick" selected>Thick</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Nose Type</label>
+                            <select id="nose_type">
+                                <option value="">Select type</option>
+                                <option value="straight">Straight</option>
+                                <option value="aquiline">Aquiline</option>
+                                <option value="button">Button</option>
+                                <option value="broad" selected>Broad</option>
+                                <option value="narrow">Narrow</option>
+                                <option value="roman">Roman</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h4 style="margin: 20px 0 15px;">Skin Analysis</h4>
+                    <div class="measurement-grid">
+                        <div class="input-group">
+                            <label>Skin Tone</label>
+                            <input type="text" id="skin_tone" value="deep warm brown" placeholder="e.g., Deep warm brown">
+                        </div>
+                        <div class="input-group">
+                            <label>Fitzpatrick Scale</label>
+                            <select id="fitzpatrick_scale">
+                                <option value="">Select scale</option>
+                                <option value="I">I - Very fair, burns easily</option>
+                                <option value="II">II - Fair, burns easily</option>
+                                <option value="III">III - Medium, sometimes burns</option>
+                                <option value="IV">IV - Olive, rarely burns</option>
+                                <option value="V" selected>IV-V - Brown, very rarely burns</option>
+                                <option value="VI">VI - Dark brown/black, never burns</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Undertone</label>
+                            <select id="undertone">
+                                <option value="">Select undertone</option>
+                                <option value="warm">Warm</option>
+                                <option value="cool">Cool</option>
+                                <option value="neutral">Neutral</option>
+                                <option value="golden-warm" selected>Golden-Warm</option>
+                                <option value="pink-cool">Pink-Cool</option>
+                                <option value="olive">Olive</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Hex Color Code</label>
+                            <input type="text" id="hex_color" value="#7a4825" placeholder="e.g., #7a4825">
+                        </div>
+                    </div>
+
+                    <h4 style="margin: 20px 0 15px;">Color & Style Recommendations</h4>
+                    <div class="input-group">
+                        <label>Best Clothing Colors</label>
+                        <textarea id="best_clothing_colors" rows="2" placeholder="Colors that complement your skin tone">earthy tones (olive, rust, camel, terracotta), jewel tones (navy, forest green, burgundy, deep teal), crisp white and off-white, warm neutrals (tan, chocolate brown, warm gray)</textarea>
+                    </div>
+                    <div class="input-group">
+                        <label>Colors to Avoid</label>
+                        <textarea id="avoid_colors" rows="2" placeholder="Colors that don't work well">washed-out pastels, neon, cool grays, icy blue</textarea>
+                    </div>
+                    <div class="input-group">
+                        <label>Styling Tips for Face Shape</label>
+                        <textarea id="face_shape_tips" rows="2" placeholder="Styling tips for your face shape">To create illusion of length, add height on top and keep sides tight. Beard filling the chin area helps elongate the face.</textarea>
                     </div>
                 </div>
 
@@ -333,5 +434,6 @@
 
     <script src="src/app.js"></script>
     <script src="src/3d-visualization.js"></script>
+    <script src="load-harsha-data.js"></script>
 </body>
 </html>
