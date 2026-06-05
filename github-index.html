@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Harsha's Realistic 3D Human</title>
+    <title>SMPL-X Inspired 3D Human Model</title>
     <style>
         * {
             margin: 0;
@@ -15,552 +15,189 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #3b4a5c 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        .human-container {
+        #canvas3d {
             width: 100vw;
             height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: block;
             cursor: grab;
-            perspective: 1500px;
         }
 
-        .human-container:active {
+        #canvas3d:active {
             cursor: grabbing;
         }
 
-        .human-model {
-            transform-style: preserve-3d;
-            transition: transform 0.05s ease-out;
-            position: relative;
-            height: 550px;
-            width: 250px;
-            scale: 1.2;
-        }
-
-        .body-part {
+        .loading {
             position: absolute;
-            transform-style: preserve-3d;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #ecf0f1;
+            z-index: 10;
+            text-align: center;
         }
 
-        /* Professional realistic skin shader */
-        .skin {
-            background:
-                radial-gradient(ellipse at 30% 20%, rgba(200, 150, 120, 0.3) 0%, transparent 50%),
-                radial-gradient(ellipse at 70% 80%, rgba(120, 80, 60, 0.2) 0%, transparent 50%),
-                linear-gradient(145deg,
-                    #a67c5a 0%,
-                    #8b5c3c 20%,
-                    #7a4825 40%,
-                    #6d3f1f 70%,
-                    #5a3318 100%);
-            box-shadow:
-                inset -6px -8px 20px rgba(0,0,0,0.4),
-                inset 6px 6px 15px rgba(255,235,205,0.15),
-                0 8px 25px rgba(0,0,0,0.3),
-                0 0 40px rgba(122,72,37,0.1);
-        }
-
-        /* Ultra-realistic head with facial structure */
-        .head {
-            width: 85px;
-            height: 110px;
-            border-radius: 42px 42px 38px 38px;
-            top: -55px;
-            left: 82px;
-            background:
-                radial-gradient(ellipse at 30% 25%, rgba(200, 150, 120, 0.4) 0%, transparent 40%),
-                radial-gradient(ellipse at 70% 75%, rgba(90, 60, 45, 0.3) 0%, transparent 50%),
-                linear-gradient(160deg,
-                    #b8845d 0%,
-                    #a67c5a 15%,
-                    #8b5c3c 35%,
-                    #7a4825 60%,
-                    #6d3f1f 85%,
-                    #5a3318 100%);
-            box-shadow:
-                inset -8px -12px 25px rgba(0,0,0,0.35),
-                inset 8px 8px 18px rgba(255,235,205,0.12),
-                0 12px 30px rgba(0,0,0,0.35);
-        }
-
-        /* Add detailed facial features */
-        .head::before {
-            content: '';
-            position: absolute;
-            top: 28px;
-            left: 18px;
-            width: 48px;
-            height: 25px;
-            background:
-                radial-gradient(ellipse at 20% 40%, rgba(0,0,0,0.6) 0%, transparent 25%),
-                radial-gradient(ellipse at 80% 40%, rgba(0,0,0,0.6) 0%, transparent 25%),
-                linear-gradient(90deg, transparent 35%, rgba(60,40,30,0.4) 45%, rgba(60,40,30,0.4) 55%, transparent 65%);
-            border-radius: 12px;
-        }
-
-        /* Add nose shadow */
-        .head::after {
-            content: '';
-            position: absolute;
-            top: 45px;
-            left: 37px;
-            width: 10px;
-            height: 20px;
-            background: linear-gradient(180deg,
-                rgba(0,0,0,0.15) 0%,
-                rgba(0,0,0,0.25) 50%,
-                rgba(0,0,0,0.1) 100%);
-            border-radius: 5px;
-            box-shadow: inset 2px 0 4px rgba(0,0,0,0.2);
-        }
-
-        /* Athletic neck with proper proportions */
-        .neck {
-            width: 50px;
-            height: 55px;
-            top: 55px;
-            left: 100px;
-            border-radius: 25px;
-            background: linear-gradient(180deg,
-                #a67c5a 0%,
-                #8b5c3c 30%,
-                #7a4825 70%,
-                #6d3f1f 100%);
-            box-shadow:
-                inset -4px -6px 15px rgba(0,0,0,0.3),
-                inset 4px 4px 10px rgba(255,235,205,0.1),
-                0 4px 12px rgba(0,0,0,0.3);
-        }
-
-        /* Muscular torso with chest definition */
-        .torso {
-            width: 130px;
-            height: 160px;
-            top: 110px;
-            left: 60px;
-            border-radius: 25px 25px 20px 20px;
-            background:
-                radial-gradient(ellipse at 35% 30%, rgba(255,235,205,0.15) 0%, transparent 40%),
-                radial-gradient(ellipse at 65% 30%, rgba(255,235,205,0.15) 0%, transparent 40%),
-                linear-gradient(145deg,
-                    #a67c5a 0%,
-                    #8b5c3c 25%,
-                    #7a4825 50%,
-                    #6d3f1f 75%,
-                    #5a3318 100%);
-            box-shadow:
-                inset -15px -18px 30px rgba(0,0,0,0.4),
-                inset 10px 10px 20px rgba(255,235,205,0.08),
-                0 15px 35px rgba(0,0,0,0.4);
-            animation: breathe 5s ease-in-out infinite;
-        }
-
-        /* Chest muscle definition */
-        .torso::before {
-            content: '';
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            width: 100px;
-            height: 80px;
-            background:
-                radial-gradient(ellipse at 25% 25%, rgba(255,235,205,0.2) 0%, transparent 30%),
-                radial-gradient(ellipse at 75% 25%, rgba(255,235,205,0.2) 0%, transparent 30%),
-                linear-gradient(180deg,
-                    rgba(255,235,205,0.1) 0%,
-                    transparent 40%,
-                    rgba(0,0,0,0.1) 100%);
-            border-radius: 20px;
-        }
-
-        /* Ab definition */
-        .torso::after {
-            content: '';
-            position: absolute;
-            top: 90px;
-            left: 35px;
+        .spinner {
             width: 60px;
-            height: 50px;
-            background:
-                linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.1) 20%, transparent 35%, rgba(0,0,0,0.1) 50%, transparent 65%, rgba(0,0,0,0.1) 80%, transparent 100%),
-                linear-gradient(180deg, rgba(255,235,205,0.05) 0%, transparent 50%, rgba(0,0,0,0.1) 100%);
-            border-radius: 15px;
+            height: 60px;
+            border: 4px solid rgba(236, 240, 241, 0.1);
+            border-top: 4px solid #e74c3c;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
         }
 
-        /* Defined abdomen */
-        .abdomen {
-            width: 110px;
-            height: 80px;
-            top: 270px;
-            left: 70px;
-            border-radius: 18px;
-            background: linear-gradient(145deg,
-                #8b5c3c 0%,
-                #7a4825 40%,
-                #6d3f1f 100%);
-            box-shadow:
-                inset -8px -10px 20px rgba(0,0,0,0.35),
-                inset 6px 6px 12px rgba(255,235,205,0.1),
-                0 8px 20px rgba(0,0,0,0.3);
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        /* Athletic pelvis */
-        .pelvis {
-            width: 100px;
-            height: 70px;
-            top: 350px;
-            left: 75px;
-            border-radius: 15px;
-            background: linear-gradient(145deg,
-                #8b5c3c 0%,
-                #7a4825 50%,
-                #6d3f1f 100%);
-            box-shadow:
-                inset -6px -8px 16px rgba(0,0,0,0.35),
-                inset 4px 4px 10px rgba(255,235,205,0.1),
-                0 6px 15px rgba(0,0,0,0.3);
+        .loading h2 {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            color: #e74c3c;
         }
 
-        /* Muscular upper arms */
-        .arm-left, .arm-right {
-            width: 32px;
-            height: 120px;
-            top: 120px;
-            border-radius: 16px;
-            background: linear-gradient(180deg,
-                #8b5c3c 0%,
-                #7a4825 40%,
-                #6d3f1f 100%);
-            box-shadow:
-                inset -4px -6px 12px rgba(0,0,0,0.35),
-                inset 3px 3px 8px rgba(255,235,205,0.1),
-                0 6px 15px rgba(0,0,0,0.3);
+        .loading p {
+            font-size: 14px;
+            opacity: 0.8;
+            font-weight: 300;
         }
 
-        .arm-left {
-            left: 20px;
-            transform: rotate(8deg);
+        .loading.hidden {
+            display: none;
         }
 
-        .arm-right {
-            right: 20px;
-            transform: rotate(-8deg);
-        }
-
-        /* Defined forearms */
-        .forearm-left, .forearm-right {
-            width: 28px;
-            height: 110px;
-            top: 235px;
-            border-radius: 14px;
-            background: linear-gradient(180deg,
-                #7a4825 0%,
-                #6d3f1f 60%,
-                #5a3318 100%);
-            box-shadow:
-                inset -3px -5px 10px rgba(0,0,0,0.35),
-                inset 3px 3px 8px rgba(255,235,205,0.1),
-                0 4px 12px rgba(0,0,0,0.3);
-        }
-
-        .forearm-left {
-            left: 22px;
-            transform: rotate(5deg);
-        }
-
-        .forearm-right {
-            right: 22px;
-            transform: rotate(-5deg);
-        }
-
-        /* Palm base */
-        .hand-left, .hand-right {
-            width: 25px;
-            height: 30px;
-            top: 340px;
-            border-radius: 12px 12px 8px 8px;
-            background: linear-gradient(145deg,
-                #8b5c3c 0%,
-                #7a4825 50%,
-                #6d3f1f 100%);
-            box-shadow:
-                inset -2px -3px 6px rgba(0,0,0,0.35),
-                inset 2px 2px 4px rgba(255,235,205,0.1),
-                0 2px 8px rgba(0,0,0,0.3);
-        }
-
-        .hand-left {
-            left: 18px;
-        }
-
-        .hand-right {
-            right: 18px;
-        }
-
-        /* Individual Finger Styling */
-        .finger {
-            position: absolute;
-            background: linear-gradient(180deg,
-                #8b5c3c 0%,
-                #7a4825 50%,
-                #6d3f1f 100%);
-            border-radius: 3px 3px 2px 2px;
-            box-shadow:
-                inset -1px -1px 2px rgba(0,0,0,0.3),
-                inset 1px 1px 1px rgba(255,235,205,0.2),
-                0 1px 3px rgba(0,0,0,0.4);
-        }
-
-        /* LEFT HAND FINGERS */
-        /* Thumb */
-        .left-thumb {
-            width: 4px;
-            height: 15px;
-            top: 350px;
-            left: 12px;
-            transform: rotate(45deg);
-            border-radius: 2px 2px 1px 1px;
-        }
-
-        /* Index finger */
-        .left-index {
-            width: 3px;
-            height: 18px;
-            top: 325px;
-            left: 20px;
-            border-radius: 1.5px 1.5px 1px 1px;
-        }
-
-        /* Middle finger */
-        .left-middle {
-            width: 3px;
-            height: 20px;
-            top: 322px;
-            left: 24px;
-            border-radius: 1.5px 1.5px 1px 1px;
-        }
-
-        /* Ring finger */
-        .left-ring {
-            width: 3px;
-            height: 17px;
-            top: 325px;
-            left: 28px;
-            border-radius: 1.5px 1.5px 1px 1px;
-        }
-
-        /* Pinky finger */
-        .left-pinky {
-            width: 2.5px;
-            height: 14px;
-            top: 328px;
-            left: 31px;
-            border-radius: 1px 1px 0.5px 0.5px;
-        }
-
-        /* RIGHT HAND FINGERS */
-        /* Thumb */
-        .right-thumb {
-            width: 4px;
-            height: 15px;
-            top: 350px;
-            right: 12px;
-            transform: rotate(-45deg);
-            border-radius: 2px 2px 1px 1px;
-        }
-
-        /* Index finger */
-        .right-index {
-            width: 3px;
-            height: 18px;
-            top: 325px;
-            right: 20px;
-            border-radius: 1.5px 1.5px 1px 1px;
-        }
-
-        /* Middle finger */
-        .right-middle {
-            width: 3px;
-            height: 20px;
-            top: 322px;
-            right: 24px;
-            border-radius: 1.5px 1.5px 1px 1px;
-        }
-
-        /* Ring finger */
-        .right-ring {
-            width: 3px;
-            height: 17px;
-            top: 325px;
-            right: 28px;
-            border-radius: 1.5px 1.5px 1px 1px;
-        }
-
-        /* Pinky finger */
-        .right-pinky {
-            width: 2.5px;
-            height: 14px;
-            top: 328px;
-            right: 31px;
-            border-radius: 1px 1px 0.5px 0.5px;
-        }
-
-        /* Finger joints (add segments to fingers) */
-        .finger::before {
-            content: '';
-            position: absolute;
-            top: 33%;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: rgba(0,0,0,0.2);
-        }
-
-        .finger::after {
-            content: '';
-            position: absolute;
-            top: 66%;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: rgba(0,0,0,0.2);
-        }
-
-        /* Muscular thighs */
-        .thigh-left, .thigh-right {
-            width: 42px;
-            height: 140px;
-            top: 420px;
-            border-radius: 21px;
-            background: linear-gradient(180deg,
-                #8b5c3c 0%,
-                #7a4825 30%,
-                #6d3f1f 70%,
-                #5a3318 100%);
-            box-shadow:
-                inset -5px -8px 16px rgba(0,0,0,0.4),
-                inset 4px 4px 10px rgba(255,235,205,0.1),
-                0 8px 20px rgba(0,0,0,0.35);
-        }
-
-        .thigh-left {
-            left: 75px;
-        }
-
-        .thigh-right {
-            right: 75px;
-        }
-
-        /* Athletic calves */
-        .calf-left, .calf-right {
-            width: 35px;
-            height: 120px;
-            top: 560px;
-            border-radius: 17px;
-            background: linear-gradient(180deg,
-                #7a4825 0%,
-                #6d3f1f 50%,
-                #5a3318 100%);
-            box-shadow:
-                inset -4px -6px 12px rgba(0,0,0,0.4),
-                inset 3px 3px 8px rgba(255,235,205,0.1),
-                0 6px 15px rgba(0,0,0,0.35);
-        }
-
-        .calf-left {
-            left: 78px;
-        }
-
-        .calf-right {
-            right: 78px;
-        }
-
-        /* Detailed feet */
-        .foot-left, .foot-right {
-            width: 60px;
-            height: 25px;
-            top: 680px;
-            border-radius: 10px 10px 6px 25px;
-            background: linear-gradient(90deg,
-                #7a4825 0%,
-                #6d3f1f 70%,
-                #5a3318 100%);
-            box-shadow:
-                inset -3px -4px 8px rgba(0,0,0,0.35),
-                inset 2px 2px 6px rgba(255,235,205,0.1),
-                0 4px 12px rgba(0,0,0,0.4);
-        }
-
-        .foot-left {
-            left: 65px;
-        }
-
-        .foot-right {
-            right: 65px;
-        }
-
-        /* Enhanced breathing animation */
-        @keyframes breathe {
-            0%, 100% {
-                transform: scale(1) scaleY(1);
-            }
-            50% {
-                transform: scale(1.008) scaleY(1.015);
-            }
-        }
-
-        /* Controls info */
         .controls-info {
             position: absolute;
             bottom: 30px;
             left: 30px;
-            background: rgba(44, 62, 80, 0.95);
+            background: rgba(26, 26, 46, 0.95);
             color: #ecf0f1;
-            padding: 16px 20px;
-            border-radius: 12px;
+            padding: 18px 22px;
+            border-radius: 15px;
             font-size: 14px;
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(231, 76, 60, 0.3);
             opacity: 0.9;
             transition: all 0.3s ease;
         }
 
         .controls-info:hover {
             opacity: 1;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            border-color: rgba(231, 76, 60, 0.6);
         }
 
         .controls-info div {
-            margin-bottom: 6px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
         }
 
         .controls-info div:last-child {
             margin-bottom: 0;
         }
 
+        .parameter-panel {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: rgba(26, 26, 46, 0.95);
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            min-width: 280px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .parameter-panel h3 {
+            color: #e74c3c;
+            margin-bottom: 15px;
+            font-size: 16px;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .param-group {
+            margin-bottom: 20px;
+        }
+
+        .param-group h4 {
+            color: #bdc3c7;
+            font-size: 13px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .param-slider {
+            margin-bottom: 12px;
+        }
+
+        .param-slider label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 5px;
+            color: #95a5a6;
+        }
+
+        .param-slider input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(52, 73, 94, 0.8);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .param-slider input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #e74c3c;
+            cursor: pointer;
+            border: 2px solid #c0392b;
+        }
+
+        .param-slider input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #e74c3c;
+            cursor: pointer;
+            border: 2px solid #c0392b;
+        }
+
         .watermark {
             position: absolute;
             bottom: 30px;
             right: 30px;
-            color: rgba(236, 240, 241, 0.7);
-            font-size: 12px;
+            color: rgba(236, 240, 241, 0.6);
+            font-size: 11px;
             font-weight: 300;
             letter-spacing: 0.5px;
         }
 
-        /* Realistic badge */
-        .realistic-badge {
+        .smplx-badge {
             position: absolute;
             top: 30px;
             left: 30px;
-            background: rgba(230, 126, 34, 0.95);
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
             color: white;
-            padding: 10px 18px;
+            padding: 12px 20px;
             border-radius: 25px;
             font-size: 13px;
             font-weight: 700;
@@ -568,226 +205,649 @@
             letter-spacing: 1px;
             backdrop-filter: blur(10px);
             animation: fadeIn 0.5s ease;
-            box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
         }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        /* Hide scrollbars */
-        body::-webkit-scrollbar {
-            display: none;
-        }
-
-        body {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
     </style>
 </head>
 <body>
-    <div class="human-container" id="humanContainer">
-        <div class="human-model" id="humanModel">
-            <!-- Realistic head with facial features -->
-            <div class="body-part head skin"></div>
-
-            <!-- Athletic neck -->
-            <div class="body-part neck skin"></div>
-
-            <!-- Muscular torso with chest definition -->
-            <div class="body-part torso skin"></div>
-
-            <!-- Defined abdomen -->
-            <div class="body-part abdomen skin"></div>
-
-            <!-- Muscular arms -->
-            <div class="body-part arm-left skin"></div>
-            <div class="body-part arm-right skin"></div>
-
-            <!-- Defined forearms -->
-            <div class="body-part forearm-left skin"></div>
-            <div class="body-part forearm-right skin"></div>
-
-            <!-- Realistic hands with individual fingers -->
-            <!-- Left hand -->
-            <div class="body-part hand-left skin"></div>
-            <div class="finger left-thumb"></div>
-            <div class="finger left-index"></div>
-            <div class="finger left-middle"></div>
-            <div class="finger left-ring"></div>
-            <div class="finger left-pinky"></div>
-
-            <!-- Right hand -->
-            <div class="body-part hand-right skin"></div>
-            <div class="finger right-thumb"></div>
-            <div class="finger right-index"></div>
-            <div class="finger right-middle"></div>
-            <div class="finger right-ring"></div>
-            <div class="finger right-pinky"></div>
-
-            <!-- Athletic pelvis -->
-            <div class="body-part pelvis skin"></div>
-
-            <!-- Muscular thighs -->
-            <div class="body-part thigh-left skin"></div>
-            <div class="body-part thigh-right skin"></div>
-
-            <!-- Athletic calves -->
-            <div class="body-part calf-left skin"></div>
-            <div class="body-part calf-right skin"></div>
-
-            <!-- Detailed feet -->
-            <div class="body-part foot-left skin"></div>
-            <div class="body-part foot-right skin"></div>
-        </div>
+    <!-- Loading indicator -->
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <h2>Loading SMPL-X Model</h2>
+        <p>Generating parametric human mesh...</p>
     </div>
 
-    <!-- Realistic badge -->
-    <div class="realistic-badge">
-        🎯 Realistic Human Model
+    <!-- 3D Canvas -->
+    <canvas id="canvas3d"></canvas>
+
+    <!-- SMPL-X Badge -->
+    <div class="smplx-badge">
+        🔬 SMPL-X Inspired Model
+    </div>
+
+    <!-- Parameter Controls -->
+    <div class="parameter-panel" id="parameterPanel">
+        <h3>Body Parameters</h3>
+
+        <div class="param-group">
+            <h4>Shape (Beta)</h4>
+            <div class="param-slider">
+                <label>Height</label>
+                <input type="range" id="beta0" min="-3" max="3" step="0.1" value="0">
+            </div>
+            <div class="param-slider">
+                <label>Weight</label>
+                <input type="range" id="beta1" min="-3" max="3" step="0.1" value="0">
+            </div>
+            <div class="param-slider">
+                <label>Chest</label>
+                <input type="range" id="beta2" min="-3" max="3" step="0.1" value="0">
+            </div>
+        </div>
+
+        <div class="param-group">
+            <h4>Pose (Theta)</h4>
+            <div class="param-slider">
+                <label>Left Arm</label>
+                <input type="range" id="pose_left_arm" min="-90" max="90" step="5" value="0">
+            </div>
+            <div class="param-slider">
+                <label>Right Arm</label>
+                <input type="range" id="pose_right_arm" min="-90" max="90" step="5" value="0">
+            </div>
+            <div class="param-slider">
+                <label>Left Leg</label>
+                <input type="range" id="pose_left_leg" min="-30" max="30" step="5" value="0">
+            </div>
+            <div class="param-slider">
+                <label>Right Leg</label>
+                <input type="range" id="pose_right_leg" min="-30" max="30" step="5" value="0">
+            </div>
+        </div>
     </div>
 
     <!-- Controls info -->
     <div class="controls-info">
-        <div><strong>🖱️ Drag:</strong> Rotate model</div>
-        <div><strong>🔍 Scroll:</strong> Zoom in/out</div>
-        <div><strong>📱 Touch:</strong> Rotate & pinch zoom</div>
+        <div><strong>🖱️ Mouse:</strong> Rotate & zoom</div>
+        <div><strong>📱 Touch:</strong> Rotate & pinch</div>
+        <div><strong>🎛️ Sliders:</strong> Adjust body</div>
     </div>
 
     <!-- Watermark -->
     <div class="watermark">
-        Harsha's Realistic 3D Human
+        SMPL-X Inspired Human Model by Harsha
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r160/three.min.js"></script>
     <script>
-        class RealisticInstant3DHuman {
+        class SMPLXInspiredHuman {
             constructor() {
-                this.container = document.getElementById('humanContainer');
-                this.model = document.getElementById('humanModel');
-                this.isDragging = false;
-                this.startX = 0;
-                this.startY = 0;
-                this.rotationY = 0;
-                this.rotationX = 0;
-                this.currentScale = 1;
+                this.scene = null;
+                this.camera = null;
+                this.renderer = null;
+                this.canvas = null;
+                this.humanMesh = null;
 
-                this.setupControls();
-                this.addSubtleAnimations();
+                // SMPL-X inspired parameters
+                this.shapeParams = {
+                    beta0: 0, // height
+                    beta1: 0, // weight
+                    beta2: 0, // chest
+                };
+
+                this.poseParams = {
+                    left_arm: 0,
+                    right_arm: 0,
+                    left_leg: 0,
+                    right_leg: 0
+                };
+
+                this.skinColor = new THREE.Color('#8b5c3c');
+                this.init();
+            }
+
+            async init() {
+                try {
+                    this.setupScene();
+                    this.createParametricHuman();
+                    this.setupLighting();
+                    this.setupControls();
+                    this.setupParameterControls();
+                    this.animate();
+                    this.hideLoading();
+                } catch (error) {
+                    console.error('Failed to initialize SMPL-X model:', error);
+                    this.hideLoading();
+                }
+            }
+
+            setupScene() {
+                this.canvas = document.getElementById('canvas3d');
+                this.scene = new THREE.Scene();
+                this.scene.background = new THREE.Color(0x1a1a2e);
+
+                this.camera = new THREE.PerspectiveCamera(
+                    50,
+                    window.innerWidth / window.innerHeight,
+                    0.1,
+                    1000
+                );
+                this.camera.position.set(0, 1.7, 4);
+
+                this.renderer = new THREE.WebGLRenderer({
+                    canvas: this.canvas,
+                    antialias: true,
+                    alpha: true
+                });
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                this.renderer.shadowMap.enabled = true;
+                this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+                this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+                this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+
+                window.addEventListener('resize', () => this.handleResize());
+            }
+
+            setupLighting() {
+                // Advanced lighting setup inspired by professional 3D rendering
+                const ambientLight = new THREE.AmbientLight(0x404040, 0.4);
+                this.scene.add(ambientLight);
+
+                // Key light
+                const keyLight = new THREE.DirectionalLight(0xffffff, 1.0);
+                keyLight.position.set(3, 5, 4);
+                keyLight.castShadow = true;
+                keyLight.shadow.mapSize.width = 2048;
+                keyLight.shadow.mapSize.height = 2048;
+                this.scene.add(keyLight);
+
+                // Fill light
+                const fillLight = new THREE.DirectionalLight(0x87ceeb, 0.5);
+                fillLight.position.set(-3, 3, -2);
+                this.scene.add(fillLight);
+
+                // Rim light
+                const rimLight = new THREE.DirectionalLight(0xe74c3c, 0.3);
+                rimLight.position.set(0, 2, -4);
+                this.scene.add(rimLight);
+
+                // Environment lighting
+                const hemiLight = new THREE.HemisphereLight(0x87CEEB, 0x2c3e50, 0.3);
+                this.scene.add(hemiLight);
+            }
+
+            createParametricHuman() {
+                // Create a detailed mesh inspired by SMPL-X topology
+                const humanGroup = new THREE.Group();
+
+                // Advanced skin material
+                const skinMaterial = new THREE.MeshPhysicalMaterial({
+                    color: this.skinColor,
+                    roughness: 0.4,
+                    metalness: 0.0,
+                    clearcoat: 0.2,
+                    clearcoatRoughness: 0.1,
+                    sheen: 0.5,
+                    sheenRoughness: 0.3,
+                    sheenColor: this.skinColor.clone().multiplyScalar(0.3),
+                });
+
+                // Create body parts with higher vertex count
+                this.createDetailedBodyParts(humanGroup, skinMaterial);
+
+                this.humanMesh = humanGroup;
+                this.scene.add(humanGroup);
+
+                // Add environment
+                this.createEnvironment();
+            }
+
+            createDetailedBodyParts(group, material) {
+                // Head with more detailed geometry
+                const headGeometry = new THREE.SphereGeometry(0.13, 32, 24);
+                headGeometry.scale(1, 1.2, 0.9);
+                const head = new THREE.Mesh(headGeometry, material);
+                head.position.y = 1.75;
+                head.castShadow = true;
+                head.receiveShadow = true;
+                head.name = 'head';
+                group.add(head);
+
+                // Neck
+                const neckGeometry = new THREE.CylinderGeometry(0.055, 0.07, 0.15, 16);
+                const neck = new THREE.Mesh(neckGeometry, material);
+                neck.position.y = 1.6;
+                neck.castShadow = true;
+                neck.receiveShadow = true;
+                neck.name = 'neck';
+                group.add(neck);
+
+                // Torso with detailed shape
+                const torsoGeometry = new THREE.CapsuleGeometry(0.18, 0.5, 16, 32);
+                torsoGeometry.scale(1.4, 1, 1.2);
+                const torso = new THREE.Mesh(torsoGeometry, material);
+                torso.position.y = 1.3;
+                torso.castShadow = true;
+                torso.receiveShadow = true;
+                torso.name = 'torso';
+                group.add(torso);
+
+                // Abdomen
+                const abdomenGeometry = new THREE.CapsuleGeometry(0.15, 0.3, 12, 24);
+                abdomenGeometry.scale(1.3, 1, 1.1);
+                const abdomen = new THREE.Mesh(abdomenGeometry, material);
+                abdomen.position.y = 0.9;
+                abdomen.castShadow = true;
+                abdomen.receiveShadow = true;
+                abdomen.name = 'abdomen';
+                group.add(abdomen);
+
+                // Pelvis
+                const pelvisGeometry = new THREE.CapsuleGeometry(0.16, 0.2, 12, 20);
+                pelvisGeometry.scale(1.2, 1, 1.3);
+                const pelvis = new THREE.Mesh(pelvisGeometry, material);
+                pelvis.position.y = 0.7;
+                pelvis.castShadow = true;
+                pelvis.receiveShadow = true;
+                pelvis.name = 'pelvis';
+                group.add(pelvis);
+
+                // Arms
+                this.createDetailedLimbs(group, material);
+
+                // Store references for parameter modification
+                this.bodyParts = {
+                    head, neck, torso, abdomen, pelvis
+                };
+            }
+
+            createDetailedLimbs(group, material) {
+                // Left upper arm
+                const upperArmGeometry = new THREE.CapsuleGeometry(0.05, 0.3, 12, 20);
+                const leftUpperArm = new THREE.Mesh(upperArmGeometry, material);
+                leftUpperArm.position.set(-0.3, 1.4, 0);
+                leftUpperArm.rotation.z = 0.2;
+                leftUpperArm.castShadow = true;
+                leftUpperArm.receiveShadow = true;
+                leftUpperArm.name = 'left_upper_arm';
+                group.add(leftUpperArm);
+
+                // Right upper arm
+                const rightUpperArm = new THREE.Mesh(upperArmGeometry, material);
+                rightUpperArm.position.set(0.3, 1.4, 0);
+                rightUpperArm.rotation.z = -0.2;
+                rightUpperArm.castShadow = true;
+                rightUpperArm.receiveShadow = true;
+                rightUpperArm.name = 'right_upper_arm';
+                group.add(rightUpperArm);
+
+                // Left forearm
+                const forearmGeometry = new THREE.CapsuleGeometry(0.04, 0.27, 12, 18);
+                const leftForearm = new THREE.Mesh(forearmGeometry, material);
+                leftForearm.position.set(-0.4, 1.08, 0.05);
+                leftForearm.rotation.z = 0.1;
+                leftForearm.castShadow = true;
+                leftForearm.receiveShadow = true;
+                leftForearm.name = 'left_forearm';
+                group.add(leftForearm);
+
+                // Right forearm
+                const rightForearm = new THREE.Mesh(forearmGeometry, material);
+                rightForearm.position.set(0.4, 1.08, 0.05);
+                rightForearm.rotation.z = -0.1;
+                rightForearm.castShadow = true;
+                rightForearm.receiveShadow = true;
+                rightForearm.name = 'right_forearm';
+                group.add(rightForearm);
+
+                // Hands with detailed fingers
+                this.createDetailedHands(group, material);
+
+                // Legs
+                this.createDetailedLegs(group, material);
+
+                // Store limb references
+                Object.assign(this.bodyParts, {
+                    leftUpperArm, rightUpperArm,
+                    leftForearm, rightForearm
+                });
+            }
+
+            createDetailedHands(group, material) {
+                // Left hand palm
+                const handGeometry = new THREE.CapsuleGeometry(0.035, 0.1, 10, 16);
+                handGeometry.scale(1.4, 1, 0.8);
+                const leftHand = new THREE.Mesh(handGeometry, material);
+                leftHand.position.set(-0.43, 0.88, 0.1);
+                leftHand.castShadow = true;
+                leftHand.receiveShadow = true;
+                group.add(leftHand);
+
+                // Right hand palm
+                const rightHand = new THREE.Mesh(handGeometry, material);
+                rightHand.position.set(0.43, 0.88, 0.1);
+                rightHand.castShadow = true;
+                rightHand.receiveShadow = true;
+                group.add(rightHand);
+
+                // Add detailed fingers
+                this.createFingers(group, material, 'left', -0.43, 0.88, 0.1);
+                this.createFingers(group, material, 'right', 0.43, 0.88, 0.1);
+            }
+
+            createFingers(group, material, hand, x, y, z) {
+                const fingerGeometry = new THREE.CapsuleGeometry(0.008, 0.04, 6, 8);
+
+                const fingers = ['thumb', 'index', 'middle', 'ring', 'pinky'];
+                const fingerLengths = [0.035, 0.045, 0.05, 0.043, 0.035];
+                const fingerPositions = hand === 'left' ?
+                    [-0.02, -0.01, 0, 0.01, 0.02] :
+                    [0.02, 0.01, 0, -0.01, -0.02];
+
+                fingers.forEach((fingerName, index) => {
+                    const fingerGeom = fingerGeometry.clone();
+                    fingerGeom.scale(1, fingerLengths[index] / 0.04, 1);
+
+                    const finger = new THREE.Mesh(fingerGeom, material);
+                    finger.position.set(
+                        x + fingerPositions[index],
+                        y - 0.06,
+                        z + (fingerName === 'thumb' ? 0.02 : 0.03)
+                    );
+
+                    if (fingerName === 'thumb') {
+                        finger.rotation.z = hand === 'left' ? 0.5 : -0.5;
+                    }
+
+                    finger.castShadow = true;
+                    finger.receiveShadow = true;
+                    group.add(finger);
+                });
+            }
+
+            createDetailedLegs(group, material) {
+                // Thighs
+                const thighGeometry = new THREE.CapsuleGeometry(0.08, 0.42, 16, 24);
+                const leftThigh = new THREE.Mesh(thighGeometry, material);
+                leftThigh.position.set(-0.1, 0.4, 0);
+                leftThigh.castShadow = true;
+                leftThigh.receiveShadow = true;
+                leftThigh.name = 'left_thigh';
+                group.add(leftThigh);
+
+                const rightThigh = new THREE.Mesh(thighGeometry, material);
+                rightThigh.position.set(0.1, 0.4, 0);
+                rightThigh.castShadow = true;
+                rightThigh.receiveShadow = true;
+                rightThigh.name = 'right_thigh';
+                group.add(rightThigh);
+
+                // Calves
+                const calfGeometry = new THREE.CapsuleGeometry(0.05, 0.38, 14, 20);
+                const leftCalf = new THREE.Mesh(calfGeometry, material);
+                leftCalf.position.set(-0.1, 0.05, 0);
+                leftCalf.castShadow = true;
+                leftCalf.receiveShadow = true;
+                leftCalf.name = 'left_calf';
+                group.add(leftCalf);
+
+                const rightCalf = new THREE.Mesh(calfGeometry, material);
+                rightCalf.position.set(0.1, 0.05, 0);
+                rightCalf.castShadow = true;
+                rightCalf.receiveShadow = true;
+                rightCalf.name = 'right_calf';
+                group.add(rightCalf);
+
+                // Feet
+                const footGeometry = new THREE.CapsuleGeometry(0.04, 0.1, 10, 16);
+                footGeometry.scale(1, 0.7, 2.5);
+                const leftFoot = new THREE.Mesh(footGeometry, material);
+                leftFoot.position.set(-0.1, -0.15, 0.06);
+                leftFoot.castShadow = true;
+                leftFoot.receiveShadow = true;
+                group.add(leftFoot);
+
+                const rightFoot = new THREE.Mesh(footGeometry, material);
+                rightFoot.position.set(0.1, -0.15, 0.06);
+                rightFoot.castShadow = true;
+                rightFoot.receiveShadow = true;
+                group.add(rightFoot);
+
+                // Store leg references
+                Object.assign(this.bodyParts, {
+                    leftThigh, rightThigh,
+                    leftCalf, rightCalf
+                });
+            }
+
+            createEnvironment() {
+                // Floor
+                const floorGeometry = new THREE.CircleGeometry(10, 64);
+                const floorMaterial = new THREE.MeshLambertMaterial({
+                    color: 0x2c3e50,
+                    transparent: true,
+                    opacity: 0.3
+                });
+                const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+                floor.rotation.x = -Math.PI / 2;
+                floor.position.y = -0.01;
+                floor.receiveShadow = true;
+                this.scene.add(floor);
             }
 
             setupControls() {
-                // Mouse events
-                this.container.addEventListener('mousedown', (e) => {
-                    this.isDragging = true;
-                    this.startX = e.clientX;
-                    this.startY = e.clientY;
+                let isMouseDown = false;
+                let mouseX = 0;
+                let mouseY = 0;
+                this.targetRotationY = 0;
+                this.targetRotationX = 0;
+                this.currentZoom = 4;
+
+                // Mouse controls
+                this.canvas.addEventListener('mousedown', (event) => {
+                    isMouseDown = true;
+                    mouseX = event.clientX;
+                    mouseY = event.clientY;
                 });
 
-                document.addEventListener('mousemove', (e) => {
-                    if (!this.isDragging) return;
+                this.canvas.addEventListener('mousemove', (event) => {
+                    if (!isMouseDown) return;
 
-                    const deltaX = e.clientX - this.startX;
-                    const deltaY = e.clientY - this.startY;
+                    const deltaX = event.clientX - mouseX;
+                    const deltaY = event.clientY - mouseY;
 
-                    this.rotationY += deltaX * 0.7;
-                    this.rotationX -= deltaY * 0.5;
+                    this.targetRotationY += deltaX * 0.01;
+                    this.targetRotationX += deltaY * 0.01;
+                    this.targetRotationX = Math.max(-Math.PI/4, Math.min(Math.PI/4, this.targetRotationX));
 
-                    // Realistic rotation limits
-                    this.rotationX = Math.max(-20, Math.min(20, this.rotationX));
-
-                    this.updateTransform();
-
-                    this.startX = e.clientX;
-                    this.startY = e.clientY;
+                    mouseX = event.clientX;
+                    mouseY = event.clientY;
                 });
 
-                document.addEventListener('mouseup', () => {
-                    this.isDragging = false;
+                this.canvas.addEventListener('mouseup', () => {
+                    isMouseDown = false;
                 });
 
-                // Enhanced touch controls
-                this.container.addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                    if (e.touches.length === 1) {
-                        this.isDragging = true;
-                        this.startX = e.touches[0].clientX;
-                        this.startY = e.touches[0].clientY;
-                    } else if (e.touches.length === 2) {
-                        this.isDragging = false;
-                        this.initialPinchDistance = this.getPinchDistance(e.touches);
-                        this.initialScale = this.currentScale;
-                    }
+                this.canvas.addEventListener('mouseleave', () => {
+                    isMouseDown = false;
                 });
 
-                document.addEventListener('touchmove', (e) => {
-                    e.preventDefault();
-                    if (e.touches.length === 1 && this.isDragging) {
-                        const deltaX = e.touches[0].clientX - this.startX;
-                        const deltaY = e.touches[0].clientY - this.startY;
-
-                        this.rotationY += deltaX * 0.9;
-                        this.rotationX -= deltaY * 0.6;
-                        this.rotationX = Math.max(-20, Math.min(20, this.rotationX));
-
-                        this.updateTransform();
-
-                        this.startX = e.touches[0].clientX;
-                        this.startY = e.touches[0].clientY;
-                    } else if (e.touches.length === 2) {
-                        const currentDistance = this.getPinchDistance(e.touches);
-                        const scaleRatio = currentDistance / this.initialPinchDistance;
-                        this.currentScale = Math.max(0.6, Math.min(2.2, this.initialScale * scaleRatio));
-                        this.updateTransform();
-                    }
+                // Zoom
+                this.canvas.addEventListener('wheel', (event) => {
+                    event.preventDefault();
+                    const zoomDelta = event.deltaY * 0.002;
+                    this.currentZoom += zoomDelta;
+                    this.currentZoom = Math.max(2.5, Math.min(8, this.currentZoom));
+                    this.camera.position.z = this.currentZoom;
                 });
 
-                document.addEventListener('touchend', () => {
-                    this.isDragging = false;
+                // Touch controls
+                this.setupTouchControls();
+            }
+
+            setupTouchControls() {
+                let touchStartX = 0;
+                let touchStartY = 0;
+                let isTouching = false;
+
+                this.canvas.addEventListener('touchstart', (event) => {
+                    event.preventDefault();
+                    isTouching = true;
+                    const touch = event.touches[0];
+                    touchStartX = touch.clientX;
+                    touchStartY = touch.clientY;
                 });
 
-                // Smooth zoom
-                this.container.addEventListener('wheel', (e) => {
-                    e.preventDefault();
-                    const zoomDelta = e.deltaY > 0 ? -0.08 : 0.08;
-                    this.currentScale = Math.max(0.6, Math.min(2.2, this.currentScale + zoomDelta));
-                    this.updateTransform();
+                this.canvas.addEventListener('touchmove', (event) => {
+                    event.preventDefault();
+                    if (!isTouching) return;
+
+                    const touch = event.touches[0];
+                    const deltaX = touch.clientX - touchStartX;
+                    const deltaY = touch.clientY - touchStartY;
+
+                    this.targetRotationY += deltaX * 0.015;
+                    this.targetRotationX += deltaY * 0.015;
+                    this.targetRotationX = Math.max(-Math.PI/4, Math.min(Math.PI/4, this.targetRotationX));
+
+                    touchStartX = touch.clientX;
+                    touchStartY = touch.clientY;
+                });
+
+                this.canvas.addEventListener('touchend', () => {
+                    isTouching = false;
                 });
             }
 
-            getPinchDistance(touches) {
-                const dx = touches[0].clientX - touches[1].clientX;
-                const dy = touches[0].clientY - touches[1].clientY;
-                return Math.sqrt(dx * dx + dy * dy);
+            setupParameterControls() {
+                // Shape parameters
+                document.getElementById('beta0').addEventListener('input', (e) => {
+                    this.shapeParams.beta0 = parseFloat(e.target.value);
+                    this.updateBodyShape();
+                });
+
+                document.getElementById('beta1').addEventListener('input', (e) => {
+                    this.shapeParams.beta1 = parseFloat(e.target.value);
+                    this.updateBodyShape();
+                });
+
+                document.getElementById('beta2').addEventListener('input', (e) => {
+                    this.shapeParams.beta2 = parseFloat(e.target.value);
+                    this.updateBodyShape();
+                });
+
+                // Pose parameters
+                document.getElementById('pose_left_arm').addEventListener('input', (e) => {
+                    this.poseParams.left_arm = parseFloat(e.target.value);
+                    this.updateBodyPose();
+                });
+
+                document.getElementById('pose_right_arm').addEventListener('input', (e) => {
+                    this.poseParams.right_arm = parseFloat(e.target.value);
+                    this.updateBodyPose();
+                });
+
+                document.getElementById('pose_left_leg').addEventListener('input', (e) => {
+                    this.poseParams.left_leg = parseFloat(e.target.value);
+                    this.updateBodyPose();
+                });
+
+                document.getElementById('pose_right_leg').addEventListener('input', (e) => {
+                    this.poseParams.right_leg = parseFloat(e.target.value);
+                    this.updateBodyPose();
+                });
             }
 
-            updateTransform() {
-                this.model.style.transform = `
-                    rotateY(${this.rotationY}deg)
-                    rotateX(${this.rotationX}deg)
-                    scale(${this.currentScale})
-                `;
+            updateBodyShape() {
+                if (!this.bodyParts) return;
+
+                // Apply shape deformations inspired by SMPL-X beta parameters
+                const { beta0, beta1, beta2 } = this.shapeParams;
+
+                // Height adjustment
+                const heightScale = 1 + beta0 * 0.1;
+                this.humanMesh.scale.y = heightScale;
+
+                // Weight adjustment
+                const weightScale = 1 + beta1 * 0.15;
+                if (this.bodyParts.torso) {
+                    this.bodyParts.torso.scale.x = weightScale;
+                    this.bodyParts.torso.scale.z = weightScale;
+                }
+                if (this.bodyParts.abdomen) {
+                    this.bodyParts.abdomen.scale.x = weightScale;
+                    this.bodyParts.abdomen.scale.z = weightScale;
+                }
+
+                // Chest adjustment
+                const chestScale = 1 + beta2 * 0.2;
+                if (this.bodyParts.torso) {
+                    this.bodyParts.torso.scale.x = weightScale * chestScale;
+                }
             }
 
-            addSubtleAnimations() {
-                // Very subtle idle sway
-                setInterval(() => {
-                    if (!this.isDragging) {
-                        const time = Date.now() * 0.0001;
-                        const subtleRotation = Math.sin(time) * 0.3;
-                        const currentTransform = this.model.style.transform;
-                        if (!currentTransform.includes('rotateZ')) {
-                            this.model.style.transform += ` rotateZ(${subtleRotation}deg)`;
-                        }
+            updateBodyPose() {
+                if (!this.bodyParts) return;
+
+                const { left_arm, right_arm, left_leg, right_leg } = this.poseParams;
+
+                // Apply pose deformations
+                if (this.bodyParts.leftUpperArm) {
+                    this.bodyParts.leftUpperArm.rotation.z = 0.2 + (left_arm * Math.PI) / 180;
+                }
+                if (this.bodyParts.rightUpperArm) {
+                    this.bodyParts.rightUpperArm.rotation.z = -0.2 + (right_arm * Math.PI) / 180;
+                }
+                if (this.bodyParts.leftThigh) {
+                    this.bodyParts.leftThigh.rotation.z = (left_leg * Math.PI) / 180;
+                }
+                if (this.bodyParts.rightThigh) {
+                    this.bodyParts.rightThigh.rotation.z = (right_leg * Math.PI) / 180;
+                }
+            }
+
+            animate() {
+                requestAnimationFrame(() => this.animate());
+
+                // Smooth rotation
+                if (this.humanMesh) {
+                    this.humanMesh.rotation.y += (this.targetRotationY - this.humanMesh.rotation.y) * 0.1;
+                    this.humanMesh.rotation.x += (this.targetRotationX - this.humanMesh.rotation.x) * 0.1;
+
+                    // Subtle breathing
+                    const time = Date.now() * 0.0005;
+                    if (this.bodyParts.torso) {
+                        this.bodyParts.torso.scale.z = (1 + this.shapeParams.beta1 * 0.15) * (1 + Math.sin(time) * 0.02);
                     }
-                }, 100);
+                }
+
+                this.renderer.render(this.scene, this.camera);
+            }
+
+            handleResize() {
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+
+                this.camera.aspect = width / height;
+                this.camera.updateProjectionMatrix();
+                this.renderer.setSize(width, height);
+            }
+
+            hideLoading() {
+                const loading = document.getElementById('loading');
+                loading.classList.add('hidden');
             }
         }
 
-        // Initialize immediately - realistic and instant!
+        // Initialize the SMPL-X inspired model
         document.addEventListener('DOMContentLoaded', () => {
-            new RealisticInstant3DHuman();
+            new SMPLXInspiredHuman();
         });
     </script>
 </body>
