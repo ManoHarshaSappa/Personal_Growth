@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Harsha's Instant 3D Human</title>
+    <title>Harsha's Realistic 3D Human</title>
     <style>
         * {
             margin: 0;
@@ -26,7 +26,7 @@
             align-items: center;
             justify-content: center;
             cursor: grab;
-            perspective: 1200px;
+            perspective: 1500px;
         }
 
         .human-container:active {
@@ -37,325 +37,368 @@
             transform-style: preserve-3d;
             transition: transform 0.05s ease-out;
             position: relative;
-            height: 600px;
-            width: 200px;
+            height: 550px;
+            width: 250px;
+            scale: 1.2;
         }
 
         .body-part {
             position: absolute;
             transform-style: preserve-3d;
-            transition: all 0.3s ease;
         }
 
-        /* Enhanced skin material with gradients and shadows */
+        /* Professional realistic skin shader */
         .skin {
-            background: linear-gradient(135deg,
-                #8b5c3c 0%,
-                #7a4825 30%,
-                #9d6b47 70%,
-                #6d3f1f 100%);
+            background:
+                radial-gradient(ellipse at 30% 20%, rgba(200, 150, 120, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(120, 80, 60, 0.2) 0%, transparent 50%),
+                linear-gradient(145deg,
+                    #a67c5a 0%,
+                    #8b5c3c 20%,
+                    #7a4825 40%,
+                    #6d3f1f 70%,
+                    #5a3318 100%);
             box-shadow:
-                inset -8px -8px 16px rgba(0,0,0,0.3),
-                inset 8px 8px 16px rgba(255,255,255,0.1),
-                0 4px 12px rgba(0,0,0,0.4);
+                inset -6px -8px 20px rgba(0,0,0,0.4),
+                inset 6px 6px 15px rgba(255,235,205,0.15),
+                0 8px 25px rgba(0,0,0,0.3),
+                0 0 40px rgba(122,72,37,0.1);
         }
 
-        /* Head - realistic proportions and features */
+        /* Ultra-realistic head with facial structure */
         .head {
-            width: 100px;
-            height: 120px;
-            border-radius: 50px 50px 45px 45px;
-            top: -60px;
-            left: 50px;
-            background: linear-gradient(145deg,
-                #9d6b47 0%,
-                #8b5c3c 30%,
-                #7a4825 60%,
-                #6d3f1f 100%);
+            width: 85px;
+            height: 110px;
+            border-radius: 42px 42px 38px 38px;
+            top: -55px;
+            left: 82px;
+            background:
+                radial-gradient(ellipse at 30% 25%, rgba(200, 150, 120, 0.4) 0%, transparent 40%),
+                radial-gradient(ellipse at 70% 75%, rgba(90, 60, 45, 0.3) 0%, transparent 50%),
+                linear-gradient(160deg,
+                    #b8845d 0%,
+                    #a67c5a 15%,
+                    #8b5c3c 35%,
+                    #7a4825 60%,
+                    #6d3f1f 85%,
+                    #5a3318 100%);
             box-shadow:
-                inset -6px -10px 20px rgba(0,0,0,0.25),
-                inset 6px 6px 15px rgba(255,255,255,0.08),
-                0 8px 20px rgba(0,0,0,0.3);
+                inset -8px -12px 25px rgba(0,0,0,0.35),
+                inset 8px 8px 18px rgba(255,235,205,0.12),
+                0 12px 30px rgba(0,0,0,0.35);
         }
 
-        /* Add facial features */
+        /* Add detailed facial features */
         .head::before {
             content: '';
             position: absolute;
-            top: 35px;
-            left: 25px;
-            width: 50px;
-            height: 35px;
-            background: linear-gradient(90deg,
-                rgba(0,0,0,0.2) 20%,
-                transparent 25%,
-                transparent 75%,
-                rgba(0,0,0,0.2) 80%);
-            border-radius: 8px;
+            top: 28px;
+            left: 18px;
+            width: 48px;
+            height: 25px;
+            background:
+                radial-gradient(ellipse at 20% 40%, rgba(0,0,0,0.6) 0%, transparent 25%),
+                radial-gradient(ellipse at 80% 40%, rgba(0,0,0,0.6) 0%, transparent 25%),
+                linear-gradient(90deg, transparent 35%, rgba(60,40,30,0.4) 45%, rgba(60,40,30,0.4) 55%, transparent 65%);
+            border-radius: 12px;
         }
 
-        /* Neck with natural taper */
-        .neck {
-            width: 45px;
-            height: 60px;
-            top: 60px;
-            left: 77px;
-            border-radius: 22px;
+        /* Add nose shadow */
+        .head::after {
+            content: '';
+            position: absolute;
+            top: 45px;
+            left: 37px;
+            width: 10px;
+            height: 20px;
             background: linear-gradient(180deg,
+                rgba(0,0,0,0.15) 0%,
+                rgba(0,0,0,0.25) 50%,
+                rgba(0,0,0,0.1) 100%);
+            border-radius: 5px;
+            box-shadow: inset 2px 0 4px rgba(0,0,0,0.2);
+        }
+
+        /* Athletic neck with proper proportions */
+        .neck {
+            width: 50px;
+            height: 55px;
+            top: 55px;
+            left: 100px;
+            border-radius: 25px;
+            background: linear-gradient(180deg,
+                #a67c5a 0%,
+                #8b5c3c 30%,
+                #7a4825 70%,
+                #6d3f1f 100%);
+            box-shadow:
+                inset -4px -6px 15px rgba(0,0,0,0.3),
+                inset 4px 4px 10px rgba(255,235,205,0.1),
+                0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        /* Muscular torso with chest definition */
+        .torso {
+            width: 130px;
+            height: 160px;
+            top: 110px;
+            left: 60px;
+            border-radius: 25px 25px 20px 20px;
+            background:
+                radial-gradient(ellipse at 35% 30%, rgba(255,235,205,0.15) 0%, transparent 40%),
+                radial-gradient(ellipse at 65% 30%, rgba(255,235,205,0.15) 0%, transparent 40%),
+                linear-gradient(145deg,
+                    #a67c5a 0%,
+                    #8b5c3c 25%,
+                    #7a4825 50%,
+                    #6d3f1f 75%,
+                    #5a3318 100%);
+            box-shadow:
+                inset -15px -18px 30px rgba(0,0,0,0.4),
+                inset 10px 10px 20px rgba(255,235,205,0.08),
+                0 15px 35px rgba(0,0,0,0.4);
+            animation: breathe 5s ease-in-out infinite;
+        }
+
+        /* Chest muscle definition */
+        .torso::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: 100px;
+            height: 80px;
+            background:
+                radial-gradient(ellipse at 25% 25%, rgba(255,235,205,0.2) 0%, transparent 30%),
+                radial-gradient(ellipse at 75% 25%, rgba(255,235,205,0.2) 0%, transparent 30%),
+                linear-gradient(180deg,
+                    rgba(255,235,205,0.1) 0%,
+                    transparent 40%,
+                    rgba(0,0,0,0.1) 100%);
+            border-radius: 20px;
+        }
+
+        /* Ab definition */
+        .torso::after {
+            content: '';
+            position: absolute;
+            top: 90px;
+            left: 35px;
+            width: 60px;
+            height: 50px;
+            background:
+                linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.1) 20%, transparent 35%, rgba(0,0,0,0.1) 50%, transparent 65%, rgba(0,0,0,0.1) 80%, transparent 100%),
+                linear-gradient(180deg, rgba(255,235,205,0.05) 0%, transparent 50%, rgba(0,0,0,0.1) 100%);
+            border-radius: 15px;
+        }
+
+        /* Defined abdomen */
+        .abdomen {
+            width: 110px;
+            height: 80px;
+            top: 270px;
+            left: 70px;
+            border-radius: 18px;
+            background: linear-gradient(145deg,
+                #8b5c3c 0%,
+                #7a4825 40%,
+                #6d3f1f 100%);
+            box-shadow:
+                inset -8px -10px 20px rgba(0,0,0,0.35),
+                inset 6px 6px 12px rgba(255,235,205,0.1),
+                0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        /* Athletic pelvis */
+        .pelvis {
+            width: 100px;
+            height: 70px;
+            top: 350px;
+            left: 75px;
+            border-radius: 15px;
+            background: linear-gradient(145deg,
                 #8b5c3c 0%,
                 #7a4825 50%,
                 #6d3f1f 100%);
             box-shadow:
-                inset -4px -4px 12px rgba(0,0,0,0.3),
-                inset 4px 4px 10px rgba(255,255,255,0.1),
-                0 3px 8px rgba(0,0,0,0.3);
+                inset -6px -8px 16px rgba(0,0,0,0.35),
+                inset 4px 4px 10px rgba(255,235,205,0.1),
+                0 6px 15px rgba(0,0,0,0.3);
         }
 
-        /* Enhanced torso with muscular definition */
-        .torso {
-            width: 140px;
-            height: 200px;
-            top: 120px;
-            left: 30px;
-            border-radius: 25px;
-            background: linear-gradient(145deg,
-                #9d6b47 0%,
-                #8b5c3c 20%,
-                #7a4825 50%,
-                #6d3f1f 80%,
-                #5a3318 100%);
-            box-shadow:
-                inset -12px -15px 25px rgba(0,0,0,0.35),
-                inset 8px 8px 18px rgba(255,255,255,0.08),
-                0 10px 25px rgba(0,0,0,0.4);
-            animation: breathe 4s ease-in-out infinite;
-        }
-
-        /* Add chest definition */
-        .torso::before {
-            content: '';
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            width: 100px;
-            height: 60px;
-            background: linear-gradient(180deg,
-                rgba(255,255,255,0.05) 0%,
-                transparent 50%,
-                rgba(0,0,0,0.1) 100%);
-            border-radius: 15px;
-        }
-
-        /* Enhanced arms with muscle definition */
+        /* Muscular upper arms */
         .arm-left, .arm-right {
-            width: 35px;
-            height: 140px;
-            top: 130px;
-            border-radius: 17px;
+            width: 32px;
+            height: 120px;
+            top: 120px;
+            border-radius: 16px;
             background: linear-gradient(180deg,
                 #8b5c3c 0%,
                 #7a4825 40%,
                 #6d3f1f 100%);
             box-shadow:
-                inset -3px -6px 12px rgba(0,0,0,0.3),
-                inset 3px 3px 8px rgba(255,255,255,0.1),
-                0 4px 12px rgba(0,0,0,0.3);
+                inset -4px -6px 12px rgba(0,0,0,0.35),
+                inset 3px 3px 8px rgba(255,235,205,0.1),
+                0 6px 15px rgba(0,0,0,0.3);
         }
 
         .arm-left {
-            left: -15px;
-            transform: rotate(12deg);
+            left: 20px;
+            transform: rotate(8deg);
         }
 
         .arm-right {
-            right: -15px;
-            transform: rotate(-12deg);
+            right: 20px;
+            transform: rotate(-8deg);
         }
 
-        /* Enhanced forearms */
+        /* Defined forearms */
         .forearm-left, .forearm-right {
-            width: 32px;
-            height: 120px;
-            top: 260px;
-            border-radius: 16px;
+            width: 28px;
+            height: 110px;
+            top: 235px;
+            border-radius: 14px;
             background: linear-gradient(180deg,
                 #7a4825 0%,
                 #6d3f1f 60%,
                 #5a3318 100%);
             box-shadow:
-                inset -3px -5px 10px rgba(0,0,0,0.3),
-                inset 3px 3px 8px rgba(255,255,255,0.1),
-                0 3px 10px rgba(0,0,0,0.3);
+                inset -3px -5px 10px rgba(0,0,0,0.35),
+                inset 3px 3px 8px rgba(255,235,205,0.1),
+                0 4px 12px rgba(0,0,0,0.3);
         }
 
         .forearm-left {
-            left: -12px;
-            transform: rotate(8deg);
+            left: 22px;
+            transform: rotate(5deg);
         }
 
         .forearm-right {
-            right: -12px;
-            transform: rotate(-8deg);
+            right: 22px;
+            transform: rotate(-5deg);
         }
 
-        /* Enhanced hands with finger details */
+        /* Realistic hands */
         .hand-left, .hand-right {
-            width: 40px;
-            height: 55px;
-            top: 375px;
-            border-radius: 20px 20px 12px 12px;
+            width: 35px;
+            height: 45px;
+            top: 340px;
+            border-radius: 17px 17px 10px 10px;
             background: linear-gradient(145deg,
                 #8b5c3c 0%,
                 #7a4825 50%,
                 #6d3f1f 100%);
             box-shadow:
-                inset -3px -4px 8px rgba(0,0,0,0.3),
-                inset 2px 2px 6px rgba(255,255,255,0.1),
-                0 2px 8px rgba(0,0,0,0.3);
+                inset -3px -4px 8px rgba(0,0,0,0.35),
+                inset 2px 2px 6px rgba(255,235,205,0.1),
+                0 3px 10px rgba(0,0,0,0.3);
         }
 
         .hand-left {
-            left: -20px;
+            left: 18px;
         }
 
         .hand-right {
-            right: -20px;
+            right: 18px;
         }
 
-        /* Add finger lines */
+        /* Hand detail - finger segments */
         .hand-left::before, .hand-right::before {
             content: '';
             position: absolute;
-            top: 8px;
-            left: 8px;
-            width: 24px;
+            top: 5px;
+            left: 5px;
+            width: 25px;
             height: 30px;
-            background: linear-gradient(90deg,
-                transparent 0%,
-                rgba(0,0,0,0.1) 20%,
-                transparent 25%,
-                rgba(0,0,0,0.1) 45%,
-                transparent 50%,
-                rgba(0,0,0,0.1) 70%,
-                transparent 75%,
-                rgba(0,0,0,0.1) 95%,
-                transparent 100%);
+            background:
+                linear-gradient(90deg,
+                    transparent 0%, rgba(0,0,0,0.1) 15%, transparent 20%,
+                    transparent 30%, rgba(0,0,0,0.1) 35%, transparent 40%,
+                    transparent 50%, rgba(0,0,0,0.1) 55%, transparent 60%,
+                    transparent 70%, rgba(0,0,0,0.1) 75%, transparent 80%);
+            border-radius: 8px;
         }
 
-        /* Enhanced abdomen */
-        .abdomen {
-            width: 120px;
-            height: 100px;
-            top: 320px;
-            left: 40px;
-            border-radius: 20px;
-            background: linear-gradient(145deg,
-                #8b5c3c 0%,
-                #7a4825 40%,
-                #6d3f1f 100%);
-            box-shadow:
-                inset -8px -10px 20px rgba(0,0,0,0.3),
-                inset 6px 6px 12px rgba(255,255,255,0.08),
-                0 6px 15px rgba(0,0,0,0.3);
-        }
-
-        /* Enhanced pelvis */
-        .pelvis {
-            width: 110px;
-            height: 90px;
-            top: 420px;
-            left: 45px;
-            border-radius: 18px;
-            background: linear-gradient(145deg,
-                #8b5c3c 0%,
-                #7a4825 50%,
-                #6d3f1f 100%);
-            box-shadow:
-                inset -6px -8px 16px rgba(0,0,0,0.3),
-                inset 4px 4px 10px rgba(255,255,255,0.08),
-                0 5px 12px rgba(0,0,0,0.3);
-        }
-
-        /* Enhanced thighs with muscle definition */
+        /* Muscular thighs */
         .thigh-left, .thigh-right {
-            width: 45px;
-            height: 170px;
-            top: 510px;
-            border-radius: 22px;
+            width: 42px;
+            height: 140px;
+            top: 420px;
+            border-radius: 21px;
             background: linear-gradient(180deg,
                 #8b5c3c 0%,
                 #7a4825 30%,
                 #6d3f1f 70%,
                 #5a3318 100%);
             box-shadow:
-                inset -4px -8px 16px rgba(0,0,0,0.35),
-                inset 4px 4px 10px rgba(255,255,255,0.08),
-                0 6px 15px rgba(0,0,0,0.3);
+                inset -5px -8px 16px rgba(0,0,0,0.4),
+                inset 4px 4px 10px rgba(255,235,205,0.1),
+                0 8px 20px rgba(0,0,0,0.35);
         }
 
         .thigh-left {
-            left: 55px;
+            left: 75px;
         }
 
         .thigh-right {
-            right: 55px;
+            right: 75px;
         }
 
-        /* Enhanced calves */
+        /* Athletic calves */
         .calf-left, .calf-right {
-            width: 38px;
-            height: 150px;
-            top: 680px;
-            border-radius: 19px;
+            width: 35px;
+            height: 120px;
+            top: 560px;
+            border-radius: 17px;
             background: linear-gradient(180deg,
                 #7a4825 0%,
                 #6d3f1f 50%,
                 #5a3318 100%);
             box-shadow:
-                inset -3px -6px 12px rgba(0,0,0,0.35),
-                inset 3px 3px 8px rgba(255,255,255,0.08),
-                0 4px 12px rgba(0,0,0,0.3);
+                inset -4px -6px 12px rgba(0,0,0,0.4),
+                inset 3px 3px 8px rgba(255,235,205,0.1),
+                0 6px 15px rgba(0,0,0,0.35);
         }
 
         .calf-left {
-            left: 58px;
+            left: 78px;
         }
 
         .calf-right {
-            right: 58px;
+            right: 78px;
         }
 
-        /* Enhanced feet with toe definition */
+        /* Detailed feet */
         .foot-left, .foot-right {
-            width: 70px;
-            height: 35px;
-            top: 830px;
-            border-radius: 12px 12px 8px 35px;
+            width: 60px;
+            height: 25px;
+            top: 680px;
+            border-radius: 10px 10px 6px 25px;
             background: linear-gradient(90deg,
                 #7a4825 0%,
                 #6d3f1f 70%,
                 #5a3318 100%);
             box-shadow:
-                inset -3px -4px 8px rgba(0,0,0,0.3),
-                inset 2px 2px 6px rgba(255,255,255,0.1),
-                0 3px 10px rgba(0,0,0,0.4);
+                inset -3px -4px 8px rgba(0,0,0,0.35),
+                inset 2px 2px 6px rgba(255,235,205,0.1),
+                0 4px 12px rgba(0,0,0,0.4);
         }
 
         .foot-left {
-            left: 40px;
+            left: 65px;
         }
 
         .foot-right {
-            right: 40px;
+            right: 65px;
         }
 
-        /* Breathing animation */
+        /* Enhanced breathing animation */
         @keyframes breathe {
             0%, 100% {
                 transform: scale(1) scaleY(1);
             }
             50% {
-                transform: scale(1.01) scaleY(1.02);
+                transform: scale(1.008) scaleY(1.015);
             }
         }
 
@@ -398,21 +441,22 @@
             letter-spacing: 0.5px;
         }
 
-        /* Instant loading message */
-        .instant-badge {
+        /* Realistic badge */
+        .realistic-badge {
             position: absolute;
             top: 30px;
             left: 30px;
-            background: rgba(46, 204, 113, 0.9);
+            background: rgba(230, 126, 34, 0.95);
             color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
+            padding: 10px 18px;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
             backdrop-filter: blur(10px);
             animation: fadeIn 0.5s ease;
+            box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3);
         }
 
         @keyframes fadeIn {
@@ -434,50 +478,50 @@
 <body>
     <div class="human-container" id="humanContainer">
         <div class="human-model" id="humanModel">
-            <!-- Head with facial features -->
+            <!-- Realistic head with facial features -->
             <div class="body-part head skin"></div>
 
-            <!-- Neck -->
+            <!-- Athletic neck -->
             <div class="body-part neck skin"></div>
 
-            <!-- Enhanced torso with muscle definition -->
+            <!-- Muscular torso with chest definition -->
             <div class="body-part torso skin"></div>
 
-            <!-- Enhanced abdomen -->
+            <!-- Defined abdomen -->
             <div class="body-part abdomen skin"></div>
 
-            <!-- Arms with muscle definition -->
+            <!-- Muscular arms -->
             <div class="body-part arm-left skin"></div>
             <div class="body-part arm-right skin"></div>
 
-            <!-- Forearms -->
+            <!-- Defined forearms -->
             <div class="body-part forearm-left skin"></div>
             <div class="body-part forearm-right skin"></div>
 
-            <!-- Hands with finger details -->
+            <!-- Realistic hands -->
             <div class="body-part hand-left skin"></div>
             <div class="body-part hand-right skin"></div>
 
-            <!-- Pelvis -->
+            <!-- Athletic pelvis -->
             <div class="body-part pelvis skin"></div>
 
-            <!-- Thighs with muscle definition -->
+            <!-- Muscular thighs -->
             <div class="body-part thigh-left skin"></div>
             <div class="body-part thigh-right skin"></div>
 
-            <!-- Calves -->
+            <!-- Athletic calves -->
             <div class="body-part calf-left skin"></div>
             <div class="body-part calf-right skin"></div>
 
-            <!-- Feet with toe definition -->
+            <!-- Detailed feet -->
             <div class="body-part foot-left skin"></div>
             <div class="body-part foot-right skin"></div>
         </div>
     </div>
 
-    <!-- Instant loading badge -->
-    <div class="instant-badge">
-        ⚡ Instant Loading - No Wait!
+    <!-- Realistic badge -->
+    <div class="realistic-badge">
+        🎯 Realistic Human Model
     </div>
 
     <!-- Controls info -->
@@ -489,11 +533,11 @@
 
     <!-- Watermark -->
     <div class="watermark">
-        Harsha's Instant 3D Human
+        Harsha's Realistic 3D Human
     </div>
 
     <script>
-        class InstantRealistic3DHuman {
+        class RealisticInstant3DHuman {
             constructor() {
                 this.container = document.getElementById('humanContainer');
                 this.model = document.getElementById('humanModel');
@@ -505,7 +549,7 @@
                 this.currentScale = 1;
 
                 this.setupControls();
-                this.addIdleAnimation();
+                this.addSubtleAnimations();
             }
 
             setupControls() {
@@ -522,11 +566,11 @@
                     const deltaX = e.clientX - this.startX;
                     const deltaY = e.clientY - this.startY;
 
-                    this.rotationY += deltaX * 0.6;
-                    this.rotationX -= deltaY * 0.4;
+                    this.rotationY += deltaX * 0.7;
+                    this.rotationX -= deltaY * 0.5;
 
-                    // Limit vertical rotation for realism
-                    this.rotationX = Math.max(-25, Math.min(25, this.rotationX));
+                    // Realistic rotation limits
+                    this.rotationX = Math.max(-20, Math.min(20, this.rotationX));
 
                     this.updateTransform();
 
@@ -538,7 +582,7 @@
                     this.isDragging = false;
                 });
 
-                // Touch events with enhanced sensitivity
+                // Enhanced touch controls
                 this.container.addEventListener('touchstart', (e) => {
                     e.preventDefault();
                     if (e.touches.length === 1) {
@@ -558,9 +602,9 @@
                         const deltaX = e.touches[0].clientX - this.startX;
                         const deltaY = e.touches[0].clientY - this.startY;
 
-                        this.rotationY += deltaX * 0.8;
-                        this.rotationX -= deltaY * 0.5;
-                        this.rotationX = Math.max(-25, Math.min(25, this.rotationX));
+                        this.rotationY += deltaX * 0.9;
+                        this.rotationX -= deltaY * 0.6;
+                        this.rotationX = Math.max(-20, Math.min(20, this.rotationX));
 
                         this.updateTransform();
 
@@ -569,7 +613,7 @@
                     } else if (e.touches.length === 2) {
                         const currentDistance = this.getPinchDistance(e.touches);
                         const scaleRatio = currentDistance / this.initialPinchDistance;
-                        this.currentScale = Math.max(0.5, Math.min(2, this.initialScale * scaleRatio));
+                        this.currentScale = Math.max(0.6, Math.min(2.2, this.initialScale * scaleRatio));
                         this.updateTransform();
                     }
                 });
@@ -578,11 +622,11 @@
                     this.isDragging = false;
                 });
 
-                // Mouse wheel for zoom
+                // Smooth zoom
                 this.container.addEventListener('wheel', (e) => {
                     e.preventDefault();
-                    const zoomDelta = e.deltaY > 0 ? -0.1 : 0.1;
-                    this.currentScale = Math.max(0.5, Math.min(2, this.currentScale + zoomDelta));
+                    const zoomDelta = e.deltaY > 0 ? -0.08 : 0.08;
+                    this.currentScale = Math.max(0.6, Math.min(2.2, this.currentScale + zoomDelta));
                     this.updateTransform();
                 });
             }
@@ -601,21 +645,24 @@
                 `;
             }
 
-            addIdleAnimation() {
-                // Subtle idle movement
+            addSubtleAnimations() {
+                // Very subtle idle sway
                 setInterval(() => {
                     if (!this.isDragging) {
-                        const time = Date.now() * 0.0002;
-                        const subtleRotation = Math.sin(time) * 0.5;
-                        this.model.style.transform += ` rotateZ(${subtleRotation}deg)`;
+                        const time = Date.now() * 0.0001;
+                        const subtleRotation = Math.sin(time) * 0.3;
+                        const currentTransform = this.model.style.transform;
+                        if (!currentTransform.includes('rotateZ')) {
+                            this.model.style.transform += ` rotateZ(${subtleRotation}deg)`;
+                        }
                     }
-                }, 50);
+                }, 100);
             }
         }
 
-        // Initialize immediately - no loading, no external dependencies!
+        // Initialize immediately - realistic and instant!
         document.addEventListener('DOMContentLoaded', () => {
-            new InstantRealistic3DHuman();
+            new RealisticInstant3DHuman();
         });
     </script>
 </body>
