@@ -1,16 +1,16 @@
 {
   "version": 2,
-  "name": "harsha-3d-body-tracker",
+  "name": "harsha-2d-body-tracker",
   "builds": [
     {
-      "src": "github-index.html",
+      "src": "index-2d.html",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "/",
-      "dest": "/github-index.html"
+      "dest": "/index-2d.html"
     },
     {
       "src": "/(.*)",

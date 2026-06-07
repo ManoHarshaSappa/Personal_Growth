@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2D Personal Body Care Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .data-input-panel, .visualization-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .panel-title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #4a5568;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .category-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .tab-button {
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .tab-button:hover, .tab-button.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .category-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .category-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .input-group input, .input-group select, .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .measurement-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .save-button, .export-button {
+            width: 48%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.3s ease;
+            display: inline-block;
+        }
+
+        .save-button:hover, .export-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .export-button {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            margin-left: 4%;
+        }
+
+        .visualization-container {
+            height: 600px;
+            background: linear-gradient(145deg, #f0f0f0, #e8e8e8);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #ccc;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .visualization-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 100;
+        }
+
+        .control-button {
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 8px 12px;
+            margin-left: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .control-button:hover {
+            background: #f0f0f0;
+        }
+
+        .progress-tracking {
+            margin-top: 30px;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            grid-column: 1 / -1;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .features-list {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            color: #4a5568;
+        }
+
+        .feature-item:before {
+            content: "✓";
+            color: #48bb78;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .measurement-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .category-tabs {
+                flex-direction: column;
+            }
+
+            .save-button, .export-button {
+                width: 100%;
+                margin-left: 0;
+                margin-top: 10px;
+            }
+        }
+
+        .instructions {
+            background: #e6f3ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .instructions h4 {
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+
+        .instructions ul {
+            margin-left: 20px;
+            color: #666;
+        }
+
+        .instructions ul li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>2D Personal Body Care Tracker</h1>
+            <p>Track your body measurements with an interactive 2D body diagram</p>
+        </div>
+
+        <div class="main-layout">
+            <div class="data-input-panel">
+                <h2 class="panel-title">📊 Data Input</h2>
+
+                <div class="instructions">
+                    <h4>How to Use:</h4>
+                    <ul>
+                        <li>Click on body parts in the diagram to jump to related forms</li>
+                        <li>Colors indicate data completion: Green (complete), Yellow (partial), Red (no data)</li>
+                        <li>Hover over body parts to see completion status</li>
+                        <li>Use tabs below to enter detailed measurements</li>
+                    </ul>
+                </div>
+
+                <div class="category-tabs">
+                    <button class="tab-button active" onclick="showCategory('face')">Face</button>
+                    <button class="tab-button" onclick="showCategory('hair')">Hair</button>
+                    <button class="tab-button" onclick="showCategory('beard')">Beard</button>
+                    <button class="tab-button" onclick="showCategory('eyes')">Eyes</button>
+                    <button class="tab-button" onclick="showCategory('body')">Body</button>
+                    <button class="tab-button" onclick="showCategory('arms')">Arms</button>
+                    <button class="tab-button" onclick="showCategory('legs')">Legs</button>
+                    <button class="tab-button" onclick="showCategory('back')">Back</button>
+                </div>
+
+                <div id="face-content" class="category-content active">
+                    <h3>🎭 Complete Face Analysis</h3>
+
+                    <h4 style="margin: 20px 0 15px;">Face Shape Analysis</h4>
+                    <div class="measurement-grid">
+                        <div class="input-group">
+                            <label>Face Shape</label>
+                            <select id="face_shape">
+                                <option value="">Select shape</option>
+                                <option value="round">Round</option>
+                                <option value="oval">Oval</option>
+                                <option value="square">Square</option>
+                                <option value="heart">Heart</option>
+                                <option value="diamond">Diamond</option>
+                                <option value="oblong">Oblong</option>
+                                <option value="round-oval" selected>Round-Oval</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Forehead Type</label>
+                            <select id="forehead_type">
+                                <option value="">Select type</option>
+                                <option value="narrow">Narrow</option>
+                                <option value="medium">Medium</option>
+                                <option value="broad" selected>Broad</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Cheekbones</label>
+                            <select id="cheekbones">
+                                <option value="">Select type</option>
+                                <option value="flat">Flat</option>
+                                <option value="medium">Medium</option>
+                                <option value="prominent" selected>Prominent</option>
+                                <option value="full">Full</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Jawline Type</label>
+                            <select id="jawline_type">
+                                <option value="">Select type</option>
+                                <option value="sharp">Sharp</option>
+                                <option value="rounded" selected>Rounded</option>
+                                <option value="soft">Soft</option>
+                                <option value="square">Square</option>
+                                <option value="defined">Defined</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h4 style="margin: 20px 0 15px;">Skin Analysis</h4>
+                    <div class="measurement-grid">
+                        <div class="input-group">
+                            <label>Skin Tone</label>
+                            <input type="text" id="skin_tone" value="deep warm brown" placeholder="e.g., Deep warm brown">
+                        </div>
+                        <div class="input-group">
+                            <label>Hex Color Code</label>
+                            <input type="text" id="hex_color" value="#7a4825" placeholder="e.g., #7a4825">
+                        </div>
+                        <div class="input-group">
+                            <label>Fitzpatrick Scale</label>
+                            <select id="fitzpatrick_scale">
+                                <option value="">Select scale</option>
+                                <option value="I">I - Very fair, burns easily</option>
+                                <option value="II">II - Fair, burns easily</option>
+                                <option value="III">III - Medium, sometimes burns</option>
+                                <option value="IV">IV - Olive, rarely burns</option>
+                                <option value="V" selected>IV-V - Brown, very rarely burns</option>
+                                <option value="VI">VI - Dark brown/black, never burns</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Undertone</label>
+                            <select id="undertone">
+                                <option value="">Select undertone</option>
+                                <option value="warm">Warm</option>
+                                <option value="cool">Cool</option>
+                                <option value="neutral">Neutral</option>
+                                <option value="golden-warm" selected>Golden-Warm</option>
+                                <option value="pink-cool">Pink-Cool</option>
+                                <option value="olive">Olive</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional category contents will be added via JavaScript -->
+
+                <button class="save-button" onclick="saveData()">💾 Save Data</button>
+                <button class="export-button" onclick="exportDiagram()">📥 Export Diagram</button>
+            </div>
+
+            <div class="visualization-panel">
+                <h2 class="panel-title">🎭 Interactive 2D Body Diagram</h2>
+
+                <div class="features-list">
+                    <div class="feature-item">Click on body parts to edit related data</div>
+                    <div class="feature-item">Real-time visual feedback based on your measurements</div>
+                    <div class="feature-item">Color-coded completion status</div>
+                    <div class="feature-item">Hover for detailed information</div>
+                    <div class="feature-item">Export diagram as PNG image</div>
+                </div>
+
+                <div class="visualization-container">
+                    <div class="visualization-controls">
+                        <button class="control-button" onclick="resetView()">Reset View</button>
+                        <button class="control-button" onclick="exportDiagram()">Export PNG</button>
+                    </div>
+                    <div id="body-diagram-container"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="progress-tracking">
+            <h2 class="panel-title">📈 Progress Tracking</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="total-measurements">0</div>
+                    <div class="stat-label">Total Measurements</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="last-update">Never</div>
+                    <div class="stat-label">Last Updated</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="completion-rate">0%</div>
+                    <div class="stat-label">Data Completion</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="tracking-days">0</div>
+                    <div class="stat-label">Days Tracking</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="src/2d-body-visualization.js"></script>
+    <script src="src/app.js"></script>
+    <script src="load-harsha-data.js"></script>
+    <script>
+        // Global variables
+        let bodyVisualization;
+        let bodyTracker;
+
+        // Initialize 2D Body Visualization when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            // Initialize the body tracker
+            bodyTracker = new BodyTracker();
+
+            // Initialize 2D visualization
+            bodyVisualization = new Body2DVisualization('body-diagram-container');
+
+            // Override the update3DVisualization method to use 2D
+            bodyTracker.update3DVisualization = function() {
+                if (bodyVisualization) {
+                    bodyVisualization.updateModel(this.currentData.current_data);
+                }
+            };
+
+            // Load initial data into visualization
+            setTimeout(() => {
+                bodyVisualization.updateModel(bodyTracker.currentData.current_data);
+            }, 500);
+        });
+
+        // Export diagram function
+        function exportDiagram() {
+            if (bodyVisualization) {
+                bodyVisualization.exportAsImage();
+                bodyTracker.showNotification('Body diagram exported as PNG! 📥', 'success');
+            }
+        }
+
+        // Reset view function
+        function resetView() {
+            if (bodyVisualization) {
+                bodyVisualization.removeHighlight();
+                bodyTracker.showNotification('View reset to default! 🔄', 'info');
+            }
+        }
+
+        // Ensure global functions are available
+        window.bodyVisualization = bodyVisualization;
+        window.exportDiagram = exportDiagram;
+        window.resetView = resetView;
+    </script>
+</body>
+</html>
