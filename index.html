@@ -353,7 +353,6 @@
         <div class="nav-container">
             <div class="nav-tabs">
                 <button class="nav-tab active" onclick="showSection('hair')">💇 Hair</button>
-                <button class="nav-tab" onclick="showSection('face')">✂️ Fades</button>
                 <button class="nav-tab" onclick="showSection('beard')">🧔 Beard</button>
                 <button class="nav-tab" onclick="showSection('body')">🏋️ Body</button>
                 <button class="nav-tab" onclick="showSection('colors')">🎨 Colors</button>
@@ -368,7 +367,10 @@
                     <div class="section-grid">
                         <div class="image-side">
                             <img src="images/HairFrontSide.png" alt="Hair Styles Reference" class="main-image">
-                            <p style="color: #718096; margin-top: 15px;">10 Best Hairstyles for You</p>
+                            <p style="color: #718096; margin-top: 15px; margin-bottom: 25px;">10 Best Hairstyles for You</p>
+
+                            <img src="images/HairSideView.png" alt="Fade Styles Reference" class="main-image">
+                            <p style="color: #718096; margin-top: 15px;">Best Fade Styles - Side & Back View</p>
                         </div>
 
                         <div class="info-side">
@@ -454,9 +456,68 @@
                         <div class="recommendation-item">9️⃣ Medium Wavy Flow (Swept Back)</div>
                         <div class="recommendation-item">🔟 Two-Block + Textured Top</div>
 
-                        <h4 style="margin-top: 25px;">💬 Simple Barber Instruction</h4>
+                        <h4 style="margin-top: 25px;">✂️ Fade Cutting Guide - From Your Reference</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
+                            <div style="background: #fef7cd; padding: 15px; border-radius: 10px; border: 2px solid #f59e0b;">
+                                <h5 style="color: #92400e; margin-bottom: 8px;">#1 Low Taper Fade</h5>
+                                <div style="color: #78350f; font-size: 0.9em;">
+                                    Start: Guard #3 (9mm)<br>
+                                    Mid: Guard #2 (6mm)<br>
+                                    Bottom: Guard #1 (3mm)
+                                </div>
+                            </div>
+
+                            <div style="background: #e0f2fe; padding: 15px; border-radius: 10px; border: 2px solid #0891b2;">
+                                <h5 style="color: #0c4a6e; margin-bottom: 8px;">#2 Natural Blend</h5>
+                                <div style="color: #164e63; font-size: 0.9em;">
+                                    Start: Guard #2 (6mm)<br>
+                                    Blend: Guard #1 (3mm)<br>
+                                    Edge: #0.5 (1.5mm)
+                                </div>
+                            </div>
+
+                            <div style="background: #f0fdf4; padding: 15px; border-radius: 10px; border: 2px solid #16a34a;">
+                                <h5 style="color: #15803d; margin-bottom: 8px;">#3 Mid Taper</h5>
+                                <div style="color: #166534; font-size: 0.9em;">
+                                    Higher blend point<br>
+                                    Guards #3 → #1<br>
+                                    Clean transitions
+                                </div>
+                            </div>
+
+                            <div style="background: #fef2f2; padding: 15px; border-radius: 10px; border: 2px solid #dc2626;">
+                                <h5 style="color: #991b1b; margin-bottom: 8px;">#4 Drop Fade</h5>
+                                <div style="color: #7f1d1d; font-size: 0.9em;">
+                                    Curves with hairline<br>
+                                    Guards #2 → #0<br>
+                                    Smooth transition
+                                </div>
+                            </div>
+
+                            <div style="background: #f3e8ff; padding: 15px; border-radius: 10px; border: 2px solid #9333ea;">
+                                <h5 style="color: #6b21a8; margin-bottom: 8px;">#5 Curly Top</h5>
+                                <div style="color: #581c87; font-size: 0.9em;">
+                                    Perfect for your hair<br>
+                                    Keep natural texture<br>
+                                    Low taper sides
+                                </div>
+                            </div>
+                        </div>
+
+                        <h4 style="margin-top: 25px;">💬 Complete Barber Instructions</h4>
                         <div style="background: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 20px; border-radius: 8px; margin: 15px 0;">
-                            <p style="font-weight: 600; color: #0c4a6e; font-size: 1.1em;">"Low taper fade. Start at #0.5 near ears and neckline, blend into #1, #2, and #3. Keep 3.5–4 inches on top with texture. Remove side bulk. Leave beard 6 mm on cheeks, 8 mm on jaw, and 10 mm on chin."</p>
+                            <p style="font-weight: 600; color: #0c4a6e; font-size: 1.1em;">"Low taper fade. Start at #0.5 near ears and neckline, blend into #1, #2, and #3. Keep 3.5–4 inches on top with texture. Remove side bulk. For your thick wavy hair, use #5 Curly Top style - keep natural texture on top with low taper sides."</p>
+                        </div>
+
+                        <div style="background: #ecfdf5; border-left: 4px solid #10b981; padding: 20px; border-radius: 8px; margin: 15px 0;">
+                            <h5 style="color: #047857; margin-bottom: 15px;">💡 Pro Fade Tips for Your Face Shape</h5>
+                            <div style="color: #065f46; line-height: 1.6;">
+                                • Keep fade low to maintain hair volume on top<br>
+                                • Avoid high fades - they widen your face<br>
+                                • Drop fade curves follow your natural hairline<br>
+                                • Leave more length on top (12-25mm) for balance<br>
+                                • Best choice: Low Taper + Curly Top (#5) from your reference
+                            </div>
                         </div>
 
                         <h4 style="margin-top: 30px;">🧴 Dandruff Treatment (If Needed)</h4>
@@ -668,64 +729,6 @@
                     </div>
                 </div>
 
-                <!-- Face Section -->
-                <div id="face" class="section">
-                    <h2 class="section-title">✂️ Fade Styles Guide</h2>
-
-                    <div class="section-grid">
-                        <div class="image-side">
-                            <img src="images/HairSideView.png" alt="Fade Styles Reference" class="main-image">
-                            <p style="color: #718096; margin-top: 15px;">Best Fade Styles - Side & Back View</p>
-                        </div>
-
-                        <div class="info-side">
-                            <div class="info-card">
-                                <h3>✂️ Fade Style Options</h3>
-                                <ul class="info-list">
-                                    <li>
-                                        <span class="info-label">Low Taper Fade (#1)</span>
-                                        <span class="info-value">Guards #3 to #1</span>
-                                    </li>
-                                    <li>
-                                        <span class="info-label">Low Fade Natural Blend (#2)</span>
-                                        <span class="info-value">Guards #2 to #0.5</span>
-                                    </li>
-                                    <li>
-                                        <span class="info-label">Mid Taper Fade (#3)</span>
-                                        <span class="info-value">Guards #3 to #1</span>
-                                    </li>
-                                    <li>
-                                        <span class="info-label">Drop Fade (#4)</span>
-                                        <span class="info-value">Guards #2 to #0</span>
-                                    </li>
-                                    <li>
-                                        <span class="info-label">Low Taper + Curly Top (#5)</span>
-                                        <span class="info-value">Perfect for your hair</span>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <div class="highlight-box">
-                                <h4>🎯 Best Choice for You</h4>
-                                <p>Low Taper Fade + Curly Top (#5) - Keeps your thick hair advantage while creating clean sides</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="recommendations">
-                        <h4>🔧 Fade Cutting Guide - Exact Blade Sizes</h4>
-                        <div class="recommendation-item">Low Taper Start: Guard #3 (9mm) at temples</div>
-                        <div class="recommendation-item">Mid-Fade Zone: Guard #2 (6mm) around ears</div>
-                        <div class="recommendation-item">Fade Bottom: Guard #1 (3mm) to #0.5 (1.5mm)</div>
-                        <div class="recommendation-item">Blend Between: Use #2 and #1.5 guards for smooth transition</div>
-
-                        <h4 style="margin-top: 20px;">💡 Pro Tips for Your Face Shape</h4>
-                        <div class="recommendation-item">Keep fade low to maintain hair volume on top</div>
-                        <div class="recommendation-item">Avoid high fades - they widen your face</div>
-                        <div class="recommendation-item">Drop fade curves follow your natural hairline</div>
-                        <div class="recommendation-item">Leave more length on top (12-25mm) for balance</div>
-                    </div>
-                </div>
 
                 <!-- Beard Section -->
                 <div id="beard" class="section">
