@@ -353,7 +353,7 @@
         <div class="nav-container">
             <div class="nav-tabs">
                 <button class="nav-tab active" onclick="showSection('hair')">💇 Hair</button>
-                <button class="nav-tab" onclick="showSection('face')">🎭 Face</button>
+                <button class="nav-tab" onclick="showSection('face')">✂️ Fades</button>
                 <button class="nav-tab" onclick="showSection('beard')">🧔 Beard</button>
                 <button class="nav-tab" onclick="showSection('body')">🏋️ Body</button>
                 <button class="nav-tab" onclick="showSection('colors')">🎨 Colors</button>
@@ -367,11 +367,11 @@
 
                     <div class="section-grid">
                         <div class="image-side">
-                            <img src="images/hair_Front side.png" alt="Hair Front Side" class="main-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <img src="images/HairFrontSide.png" alt="Hair Styles Reference" class="main-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                             <div class="image-placeholder" style="display: none;">
                                 Hair photos<br>loading...
                             </div>
-                            <p style="color: #718096; margin-top: 15px;">Front & Side View</p>
+                            <p style="color: #718096; margin-top: 15px;">10 Best Hairstyles for You</p>
                         </div>
 
                         <div class="info-side">
@@ -405,81 +405,84 @@
                     </div>
 
                     <div class="recommendations">
-                        <h4>✅ Perfect Haircuts for You</h4>
-                        <div class="recommendation-item">Textured Quiff - Push volume forward and up</div>
-                        <div class="recommendation-item">Low Taper Fade + Curly Top - Keep natural curl with tight sides</div>
-                        <div class="recommendation-item">Messy Textured Crop - Controlled natural texture</div>
-                        <div class="recommendation-item">Side Part + Taper Fade - Professional classic look</div>
+                        <h4>✅ Perfect Haircuts for You (From Your Reference)</h4>
+                        <div class="recommendation-item">Textured Quiff (#1) - Top: 25-30mm (Guard #8), Sides: 6mm (Guard #2)</div>
+                        <div class="recommendation-item">Low Taper Fade (#3) - Top: 20-25mm (Guard #6-8), Fade: 3-9mm (Guards #1-3)</div>
+                        <div class="recommendation-item">Side Part Taper Fade (#4) - Top: 15-20mm (Guard #5-6), Sides: 6-12mm</div>
+                        <div class="recommendation-item">Messy Textured Crop (#5) - Overall: 12-15mm (Guard #4-5)</div>
+
+                        <h4 style="margin-top: 20px;">🔧 Trimmer Blade Sizes for Your Styles</h4>
+                        <div class="recommendation-item">For Top Length: Use Guards #4-8 (12-25mm)</div>
+                        <div class="recommendation-item">For Fade Sides: Start Guard #3 (9mm), blend to #1 (3mm)</div>
+                        <div class="recommendation-item">For Clean Lines: Use #0.5 (1.5mm) or trimmer blade</div>
+                        <div class="recommendation-item">For Blending: Guards #2 and #3 (6mm and 9mm)</div>
 
                         <h4 style="margin-top: 20px;">❌ Avoid These Cuts</h4>
                         <div class="recommendation-item avoid">Buzz Cut - Makes face appear wider</div>
-                        <div class="recommendation-item avoid">High Skin Fade with Short Top - Removes your best feature</div>
-                        <div class="recommendation-item avoid">Completely Shaved Head - Emphasizes round face</div>
+                        <div class="recommendation-item avoid">High Skin Fade - Removes your thick hair advantage</div>
+                        <div class="recommendation-item avoid">Very Short All Over - Guard #1 or less on top</div>
                     </div>
                 </div>
 
                 <!-- Face Section -->
                 <div id="face" class="section">
-                    <h2 class="section-title">🎭 Face Analysis</h2>
+                    <h2 class="section-title">✂️ Fade Styles Guide</h2>
 
                     <div class="section-grid">
                         <div class="image-side">
-                            <img src="images/side and back view.png" alt="Face Profile" class="main-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <img src="images/HairSideView.png" alt="Fade Styles Reference" class="main-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                             <div class="image-placeholder" style="display: none;">
-                                Face photos<br>loading...
+                                Fade photos<br>loading...
                             </div>
-                            <p style="color: #718096; margin-top: 15px;">Side Profile View</p>
+                            <p style="color: #718096; margin-top: 15px;">Best Fade Styles - Side & Back View</p>
                         </div>
 
                         <div class="info-side">
                             <div class="info-card">
-                                <h3>📏 Face Structure</h3>
+                                <h3>✂️ Fade Style Options</h3>
                                 <ul class="info-list">
                                     <li>
-                                        <span class="info-label">Face Shape</span>
-                                        <span class="info-value">Round to Oval</span>
+                                        <span class="info-label">Low Taper Fade (#1)</span>
+                                        <span class="info-value">Guards #3 to #1</span>
                                     </li>
                                     <li>
-                                        <span class="info-label">Face Ratio</span>
-                                        <span class="info-value">1.5 - 1.7</span>
+                                        <span class="info-label">Low Fade Natural Blend (#2)</span>
+                                        <span class="info-value">Guards #2 to #0.5</span>
                                     </li>
                                     <li>
-                                        <span class="info-label">Jawline</span>
-                                        <span class="info-value">Soft, Broad Cheeks</span>
+                                        <span class="info-label">Mid Taper Fade (#3)</span>
+                                        <span class="info-value">Guards #3 to #1</span>
                                     </li>
                                     <li>
-                                        <span class="info-label">Goal</span>
-                                        <span class="info-value">Slimmer Appearance</span>
+                                        <span class="info-label">Drop Fade (#4)</span>
+                                        <span class="info-value">Guards #2 to #0</span>
+                                    </li>
+                                    <li>
+                                        <span class="info-label">Low Taper + Curly Top (#5)</span>
+                                        <span class="info-value">Perfect for your hair</span>
                                     </li>
                                 </ul>
                             </div>
 
-                            <div class="info-card">
-                                <h3>👁️ Features</h3>
-                                <ul class="info-list">
-                                    <li>
-                                        <span class="info-label">Eyes</span>
-                                        <span class="info-value">Dark Brown, Almond</span>
-                                    </li>
-                                    <li>
-                                        <span class="info-label">Eyebrows</span>
-                                        <span class="info-value">Thick, Masculine</span>
-                                    </li>
-                                    <li>
-                                        <span class="info-label">Complexion</span>
-                                        <span class="info-value">Medium Brown</span>
-                                    </li>
-                                </ul>
+                            <div class="highlight-box">
+                                <h4>🎯 Best Choice for You</h4>
+                                <p>Low Taper Fade + Curly Top (#5) - Keeps your thick hair advantage while creating clean sides</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="recommendations">
-                        <h4>💡 Face Enhancement Tips</h4>
-                        <div class="recommendation-item">Add height on top with hair to create length illusion</div>
-                        <div class="recommendation-item">Keep hair sides tight to avoid widening face</div>
-                        <div class="recommendation-item">Beard on chin area helps elongate face shape</div>
-                        <div class="recommendation-item">Weight loss will naturally sharpen jawline</div>
+                        <h4>🔧 Fade Cutting Guide - Exact Blade Sizes</h4>
+                        <div class="recommendation-item">Low Taper Start: Guard #3 (9mm) at temples</div>
+                        <div class="recommendation-item">Mid-Fade Zone: Guard #2 (6mm) around ears</div>
+                        <div class="recommendation-item">Fade Bottom: Guard #1 (3mm) to #0.5 (1.5mm)</div>
+                        <div class="recommendation-item">Blend Between: Use #2 and #1.5 guards for smooth transition</div>
+
+                        <h4 style="margin-top: 20px;">💡 Pro Tips for Your Face Shape</h4>
+                        <div class="recommendation-item">Keep fade low to maintain hair volume on top</div>
+                        <div class="recommendation-item">Avoid high fades - they widen your face</div>
+                        <div class="recommendation-item">Drop fade curves follow your natural hairline</div>
+                        <div class="recommendation-item">Leave more length on top (12-25mm) for balance</div>
                     </div>
                 </div>
 
@@ -489,10 +492,11 @@
 
                     <div class="section-grid">
                         <div class="image-side">
-                            <div class="image-placeholder">
-                                Add beard.jpg<br>for detailed view
+                            <img src="images/BeardStyle.png" alt="Beard Styles Reference" class="main-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="image-placeholder" style="display: none;">
+                                Beard photos<br>loading...
                             </div>
-                            <p style="color: #718096; margin-top: 15px;">Beard Close-up</p>
+                            <p style="color: #718096; margin-top: 15px;">Beard & Mustache Style Options</p>
                         </div>
 
                         <div class="info-side">
@@ -537,15 +541,24 @@
                     </div>
 
                     <div class="recommendations">
-                        <h4>✅ Best Beard Styles for You</h4>
-                        <div class="recommendation-item">6-10mm shaped beard with defined edges</div>
-                        <div class="recommendation-item">Short boxed beard with longer chin area</div>
-                        <div class="recommendation-item">Corporate stubble (3-5mm) for professional look</div>
+                        <h4>✅ Best Beard Styles for You (From Your Reference)</h4>
+                        <div class="recommendation-item">Short Boxed Beard (#1) - Use Guard #2-3 (6-9mm) all over</div>
+                        <div class="recommendation-item">Faded Beard (#2) - Chin: Guard #3 (9mm), fade to #1 (3mm)</div>
+                        <div class="recommendation-item">Corporate Beard (#4) - Guard #2 (6mm) with sharp lines</div>
+                        <div class="recommendation-item">Heavy Stubble (#3) - Guard #1-2 (3-6mm) for professional look</div>
 
-                        <h4 style="margin-top: 20px;">🔧 Grooming Tips</h4>
-                        <div class="recommendation-item">Define neckline 1-2 fingers above Adam's apple</div>
-                        <div class="recommendation-item">Keep chin full to elongate face shape</div>
-                        <div class="recommendation-item">Clean sharp cheek lines</div>
+                        <h4 style="margin-top: 20px;">🔧 Exact Blade Sizes for Your Beard</h4>
+                        <div class="recommendation-item">Main Beard Length: Guard #2 (6mm) or Guard #3 (9mm)</div>
+                        <div class="recommendation-item">Mustache: Guard #1-2 (3-6mm) - keep connected</div>
+                        <div class="recommendation-item">Neckline Cleanup: #0.5 (1.5mm) or bare blade</div>
+                        <div class="recommendation-item">Cheek Line Definition: #0.5 or precision trimmer</div>
+                        <div class="recommendation-item">Blending/Fading: Use Guards #1, #2, #3 (3mm, 6mm, 9mm)</div>
+
+                        <h4 style="margin-top: 20px;">📅 Maintenance Schedule</h4>
+                        <div class="recommendation-item">Daily: Check mustache line and stray hairs</div>
+                        <div class="recommendation-item">Every 3-4 days: Trim main length with guard</div>
+                        <div class="recommendation-item">Weekly: Define neckline and cheek lines</div>
+                        <div class="recommendation-item">Bi-weekly: Professional shape-up if needed</div>
                     </div>
                 </div>
 
