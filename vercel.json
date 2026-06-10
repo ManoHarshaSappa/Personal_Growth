@@ -1,16 +1,16 @@
 {
   "version": 2,
-  "name": "harsha-2d-body-tracker",
+  "name": "personal-transformation-master",
   "builds": [
     {
-      "src": "index-2d.html",
+      "src": "index.html",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "/",
-      "dest": "/index-2d.html"
+      "dest": "/index.html"
     },
     {
       "src": "/(.*)",

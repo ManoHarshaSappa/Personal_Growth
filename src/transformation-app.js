@@ -1,275 +1,269 @@
-// Personal Transformation Master - Main Application Logic
-class TransformationApp {
+// Personal Transformation Tracker - Sectional Data Management System
+class TransformationTracker {
     constructor() {
-        this.profile = {
-            currentWeight: 80,
-            targetWeight: 70,
-            startDate: new Date().toISOString().split('T')[0],
-            weeklyGoal: 0.5 // kg per week
-        };
-        this.progressData = {};
-        this.routines = {};
+        this.data = {};
+        this.sections = ['hair', 'face', 'beard', 'body', 'skin', 'fitness', 'nutrition', 'style'];
+        this.currentSection = 'hair';
         this.init();
     }
 
     init() {
-        this.loadUserData();
+        this.loadAllData();
         this.setupEventListeners();
-        this.updateProgressDisplay();
-        this.initializeRoutines();
-        this.setupSchedule();
+        this.updateDashboard();
+        this.setupRangeInputs();
+        this.loadSectionData(this.currentSection);
     }
 
-    loadUserData() {
-        const stored = localStorage.getItem('transformationData');
+    // Data Management
+    loadAllData() {
+        const stored = localStorage.getItem('transformationTrackerData');
         if (stored) {
-            const data = JSON.parse(stored);
-            this.profile = { ...this.profile, ...data.profile };
-            this.progressData = data.progressData || {};
-            this.routines = data.routines || {};
+            this.data = JSON.parse(stored);
+        } else {
+            this.data = this.createDefaultData();
         }
     }
 
-    saveData() {
-        const data = {
-            profile: this.profile,
-            progressData: this.progressData,
-            routines: this.routines,
-            lastSaved: new Date().toISOString()
+    createDefaultData() {
+        const defaultData = {
+            metadata: {
+                createdDate: new Date().toISOString(),
+                lastUpdated: new Date().toISOString(),
+                version: '2.0.0'
+            },
+            sections: {}
         };
-        localStorage.setItem('transformationData', JSON.stringify(data));
-        this.showNotification('Progress saved successfully! 📊', 'success');
+
+        // Initialize empty sections
+        this.sections.forEach(section => {
+            defaultData.sections[section] = {
+                data: {},
+                lastSaved: null,
+                completion: 0
+            };
+        });
+
+        return defaultData;
     }
 
-    initializeRoutines() {
-        this.routines = {
-            hairCare: {
-                name: 'Hair Care Routine',
-                daily: [
-                    'Apply leave-in curl cream to damp hair',
-                    'Use sea salt spray for texture',
-                    'Scrunch gently, air dry or diffuse'
-                ],
-                weekly: [
-                    'Wash hair every 3-4 days (Mon/Thu)',
-                    'Deep condition on wash days',
-                    'Hair mask on Sunday nights'
-                ]
-            },
-            skincare: {
-                name: 'Skincare Routine',
-                morning: [
-                    'Gentle cleanser',
-                    'Vitamin C serum (wait 10 min)',
-                    'Moisturizer with ceramides',
-                    'SPF 50 broad spectrum'
-                ],
-                evening: [
-                    'Gentle cleanser',
-                    'Niacinamide serum',
-                    'Night moisturizer'
-                ],
-                weekly: [
-                    'BHA exfoliation 2x/week',
-                    'Hydrating mask on Sundays'
-                ]
-            },
-            beardCare: {
-                name: 'Beard Grooming',
-                daily: [
-                    '3-4 drops beard oil after shower',
-                    'Brush downward with boar bristle brush',
-                    'Train hair to grow down from jaw'
-                ],
-                weekly: [
-                    'Trim with 6-8mm guard',
-                    'Define neckline (two-finger rule)',
-                    'Clean up cheek lines',
-                    'Shape mustache'
-                ]
-            },
-            fitness: {
-                name: 'Workout Routine',
-                schedule: {
-                    'Monday': 'Chest/Shoulders + Beard trim',
-                    'Tuesday': 'Back/Biceps + HIIT cardio',
-                    'Wednesday': 'Legs + Meal prep',
-                    'Thursday': 'Shoulders/Core + HIIT cardio',
-                    'Friday': 'Active rest + Steady cardio',
-                    'Saturday': 'Full body + BHA exfoliate',
-                    'Sunday': 'Rest + Hair mask + Face mask'
-                },
-                exercises: {
-                    'Chest/Shoulders': [
-                        'Push-ups: 3x8-12',
-                        'Bench press: 3x8-12',
-                        'Shoulder press: 3x12-15',
-                        'Lateral raises: 3x12-15'
-                    ],
-                    'Back/Biceps': [
-                        'Pull-ups: 3x6-10',
-                        'Rows: 3x8-12',
-                        'Lat pulldowns: 3x12-15',
-                        'Bicep curls: 3x12-15'
-                    ]
+    saveAllData() {
+        this.data.metadata.lastUpdated = new Date().toISOString();
+        localStorage.setItem('transformationTrackerData', JSON.stringify(this.data));
+        this.updateDashboard();
+    }
+
+    // Section Management
+    showSection(sectionName) {
+        // Hide all sections
+        document.querySelectorAll('.tab-pane').forEach(pane => {
+            pane.classList.remove('active');
+        });
+
+        // Remove active from all tabs
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        // Show selected section
+        const targetSection = document.getElementById(`${sectionName}-section`);
+        if (targetSection) {
+            targetSection.classList.add('active');
+        }
+
+        // Activate selected tab
+        const targetTab = document.querySelector(`[onclick="showSection('${sectionName}')"]`);
+        if (targetTab) {
+            targetTab.classList.add('active');
+        }
+
+        this.currentSection = sectionName;
+        this.loadSectionData(sectionName);
+    }
+
+    loadSectionData(sectionName) {
+        const sectionData = this.data.sections[sectionName]?.data || {};
+
+        // Load data into form fields
+        Object.keys(sectionData).forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.value = sectionData[fieldId];
+
+                // Handle range inputs
+                if (field.type === 'range') {
+                    this.updateRangeValue(field);
                 }
             }
-        };
-    }
+        });
 
-    updateProgressDisplay() {
-        const currentDate = new Date();
-        const startDate = new Date(this.profile.startDate);
-        const daysPassed = Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24));
-        const weeksPassed = Math.max(1, Math.floor(daysPassed / 7));
-
-        // Update progress cards
-        const progressElements = {
-            week: document.querySelector('.progress-card:nth-child(1) .progress-value'),
-            weight: document.querySelector('.progress-card:nth-child(2) .progress-value'),
-            target: document.querySelector('.progress-card:nth-child(3) .progress-value'),
-            timeline: document.querySelector('.progress-card:nth-child(4) .progress-value')
-        };
-
-        if (progressElements.week) {
-            progressElements.week.textContent = `Week ${weeksPassed}`;
-        }
-
-        if (progressElements.weight) {
-            const currentWeight = this.getCurrentWeight();
-            progressElements.weight.textContent = `${currentWeight} kg`;
-        }
-
-        if (progressElements.target) {
-            const targetLoss = this.profile.currentWeight - this.profile.targetWeight;
-            progressElements.target.textContent = `${targetLoss} kg`;
-        }
-
-        if (progressElements.timeline) {
-            const estimatedWeeks = Math.ceil((this.profile.currentWeight - this.profile.targetWeight) / this.profile.weeklyGoal);
-            progressElements.timeline.textContent = `${estimatedWeeks} weeks`;
+        // Update last saved display
+        const lastSaved = this.data.sections[sectionName]?.lastSaved;
+        const lastSavedElement = document.getElementById(`${sectionName}-last-saved`);
+        if (lastSavedElement) {
+            if (lastSaved) {
+                const date = new Date(lastSaved);
+                lastSavedElement.textContent = `Last saved: ${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+            } else {
+                lastSavedElement.textContent = 'Never saved';
+            }
         }
     }
 
-    getCurrentWeight() {
-        const latestEntry = Object.keys(this.progressData)
-            .sort()
-            .reverse()[0];
+    saveSection(sectionName) {
+        const sectionData = {};
+        const sectionElement = document.getElementById(`${sectionName}-section`);
 
-        return latestEntry ? this.progressData[latestEntry].weight : this.profile.currentWeight;
-    }
+        if (!sectionElement) return;
 
-    setupSchedule() {
-        const today = new Date().getDay();
-        const dayCards = document.querySelectorAll('.day-card');
+        // Collect all form data from the section
+        const inputs = sectionElement.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+            if (input.id) {
+                let value = input.value;
 
-        dayCards.forEach((card, index) => {
-            // Sunday = 0, but we want it at position 6 in our grid
-            const dayIndex = index === 6 ? 0 : index + 1;
+                // Handle different input types
+                if (input.type === 'number') {
+                    value = value ? parseFloat(value) : null;
+                } else if (input.type === 'date') {
+                    value = value || null;
+                } else if (input.type === 'range') {
+                    value = parseInt(value);
+                }
 
-            if (dayIndex === today) {
-                card.classList.add('today');
-                // Add special today styling or notifications
-                this.addTodaysTasks(card);
+                sectionData[input.id] = value;
             }
         });
+
+        // Save to data structure
+        if (!this.data.sections[sectionName]) {
+            this.data.sections[sectionName] = { data: {}, lastSaved: null, completion: 0 };
+        }
+
+        this.data.sections[sectionName].data = sectionData;
+        this.data.sections[sectionName].lastSaved = new Date().toISOString();
+        this.data.sections[sectionName].completion = this.calculateSectionCompletion(sectionData);
+
+        this.saveAllData();
+        this.loadSectionData(sectionName);
+        this.showNotification(`✅ ${sectionName.charAt(0).toUpperCase() + sectionName.slice(1)} data saved successfully!`, 'success');
     }
 
-    addTodaysTasks(dayCard) {
-        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        const today = days[new Date().getDay()];
-        const todaysTasks = this.routines.fitness.schedule[today];
+    resetSection(sectionName) {
+        if (confirm(`Are you sure you want to reset all ${sectionName} data? This cannot be undone.`)) {
+            const sectionElement = document.getElementById(`${sectionName}-section`);
+            if (!sectionElement) return;
 
-        // Could add dynamic task updates here
-        console.log(`Today's focus: ${todaysTasks}`);
-    }
+            // Reset all form fields
+            const inputs = sectionElement.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                if (input.type === 'range') {
+                    input.value = 5; // Default middle value for ranges
+                    this.updateRangeValue(input);
+                } else if (input.type === 'number') {
+                    input.value = '';
+                } else if (input.type === 'date') {
+                    input.value = '';
+                } else {
+                    input.value = '';
+                }
+            });
 
-    logProgress(data) {
-        const today = new Date().toISOString().split('T')[0];
-        this.progressData[today] = {
-            date: today,
-            weight: data.weight || this.getCurrentWeight(),
-            skinRating: data.skinRating || 5,
-            energyLevel: data.energyLevel || 7,
-            workoutCompleted: data.workoutCompleted || false,
-            notes: data.notes || '',
-            photos: data.photos || []
-        };
-
-        this.saveData();
-        this.updateProgressDisplay();
-        this.checkMilestones();
-    }
-
-    checkMilestones() {
-        const currentDate = new Date();
-        const startDate = new Date(this.profile.startDate);
-        const daysPassed = Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24));
-        const weeksPassed = Math.floor(daysPassed / 7);
-
-        // Check for milestone weeks
-        if (weeksPassed === 4) {
-            this.showMilestone('Week 4: Skin Assessment Time!', 'Time to evaluate skin improvements and adjust skincare routine if needed.');
-        } else if (weeksPassed === 8) {
-            this.showMilestone('Week 8: Major Progress Check!', 'Take progress photos, measurements, and adjust diet/workout plan.');
-        } else if (weeksPassed === 12) {
-            this.showMilestone('Week 12: Transformation Complete!', 'Final assessment and planning for the next phase of your journey.');
+            // Clear saved data
+            this.data.sections[sectionName] = { data: {}, lastSaved: null, completion: 0 };
+            this.saveAllData();
+            this.showNotification(`🔄 ${sectionName.charAt(0).toUpperCase() + sectionName.slice(1)} data reset`, 'info');
         }
     }
 
-    showMilestone(title, message) {
-        const milestone = document.createElement('div');
-        milestone.style.cssText = `
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            z-index: 1001;
-            text-align: center;
-            max-width: 400px;
-            animation: milestoneAppear 0.5s ease;
-        `;
+    calculateSectionCompletion(sectionData) {
+        const fields = Object.keys(sectionData);
+        const filledFields = fields.filter(field => {
+            const value = sectionData[field];
+            return value !== null && value !== undefined && value !== '';
+        });
 
-        milestone.innerHTML = `
-            <h3 style="margin-bottom: 15px; font-size: 1.5em;">${title}</h3>
-            <p style="margin-bottom: 20px; line-height: 1.5;">${message}</p>
-            <button onclick="this.parentElement.remove()" style="
-                background: rgba(255,255,255,0.2);
-                color: white;
-                border: none;
-                padding: 10px 20px;
-                border-radius: 25px;
-                cursor: pointer;
-                font-weight: bold;
-            ">Got it! 🎯</button>
-        `;
-
-        document.body.appendChild(milestone);
-
-        // Add animation styles
-        const milestoneStyle = document.createElement('style');
-        milestoneStyle.textContent = `
-            @keyframes milestoneAppear {
-                from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
-                to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-            }
-        `;
-        document.head.appendChild(milestoneStyle);
+        return fields.length > 0 ? Math.round((filledFields.length / fields.length) * 100) : 0;
     }
 
-    setupEventListeners() {
-        // Quick progress logging
-        this.createQuickLogButton();
+    // Dashboard Updates
+    updateDashboard() {
+        const totalEntries = this.getTotalEntries();
+        const sectionsCompleted = this.getCompletedSections();
+        const overallCompletion = this.getOverallCompletion();
+        const lastUpdate = this.getLastUpdate();
 
+        // Update dashboard stats
+        this.updateElement('total-entries', totalEntries);
+        this.updateElement('sections-completed', `${sectionsCompleted}/${this.sections.length}`);
+        this.updateElement('completion-rate', `${overallCompletion}%`);
+        this.updateElement('last-update', lastUpdate);
+
+        // Update progress bar
+        const progressBar = document.getElementById('overall-progress');
+        if (progressBar) {
+            progressBar.style.width = `${overallCompletion}%`;
+        }
+    }
+
+    updateElement(id, value) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = value;
+        }
+    }
+
+    getTotalEntries() {
+        let total = 0;
+        this.sections.forEach(section => {
+            const sectionData = this.data.sections[section]?.data || {};
+            total += Object.keys(sectionData).length;
+        });
+        return total;
+    }
+
+    getCompletedSections() {
+        return this.sections.filter(section => {
+            const completion = this.data.sections[section]?.completion || 0;
+            return completion >= 50; // Consider 50%+ as "completed"
+        }).length;
+    }
+
+    getOverallCompletion() {
+        const completions = this.sections.map(section => {
+            return this.data.sections[section]?.completion || 0;
+        });
+
+        return completions.length > 0 ?
+            Math.round(completions.reduce((sum, comp) => sum + comp, 0) / completions.length) : 0;
+    }
+
+    getLastUpdate() {
+        const lastUpdate = this.data.metadata?.lastUpdated;
+        if (!lastUpdate) return 'Never';
+
+        const date = new Date(lastUpdate);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / (1000 * 60));
+        const diffHours = Math.floor(diffMins / 60);
+        const diffDays = Math.floor(diffHours / 24);
+
+        if (diffMins < 1) return 'Just now';
+        if (diffMins < 60) return `${diffMins}m ago`;
+        if (diffHours < 24) return `${diffHours}h ago`;
+        if (diffDays === 1) return 'Yesterday';
+        if (diffDays < 7) return `${diffDays}d ago`;
+
+        return date.toLocaleDateString();
+    }
+
+    // Event Listeners
+    setupEventListeners() {
         // Auto-save on visibility change
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
-                this.saveData();
+                this.saveAllData();
             }
         });
 
@@ -279,271 +273,203 @@ class TransformationApp {
                 switch(e.key) {
                     case 's':
                         e.preventDefault();
-                        this.saveData();
+                        this.saveSection(this.currentSection);
                         break;
-                    case 'l':
+                    case 'e':
                         e.preventDefault();
-                        this.openQuickLog();
+                        this.exportData();
                         break;
                 }
             }
         });
-    }
 
-    createQuickLogButton() {
-        const quickLogBtn = document.createElement('button');
-        quickLogBtn.innerHTML = '📊 Quick Log';
-        quickLogBtn.style.cssText = `
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px 20px;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
-            transition: all 0.3s ease;
-            z-index: 1000;
-        `;
-
-        quickLogBtn.addEventListener('mouseenter', () => {
-            quickLogBtn.style.transform = 'translateY(-3px)';
-            quickLogBtn.style.boxShadow = '0 8px 25px rgba(102, 126, 234, 0.4)';
-        });
-
-        quickLogBtn.addEventListener('mouseleave', () => {
-            quickLogBtn.style.transform = 'translateY(0)';
-            quickLogBtn.style.boxShadow = '0 5px 20px rgba(102, 126, 234, 0.3)';
-        });
-
-        quickLogBtn.addEventListener('click', () => this.openQuickLog());
-        document.body.appendChild(quickLogBtn);
-    }
-
-    openQuickLog() {
-        const modal = document.createElement('div');
-        modal.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1001;
-        `;
-
-        modal.innerHTML = `
-            <div style="
-                background: white;
-                padding: 30px;
-                border-radius: 15px;
-                max-width: 400px;
-                width: 90%;
-                max-height: 80vh;
-                overflow-y: auto;
-            ">
-                <h2 style="margin-bottom: 20px; text-align: center; color: #4a5568;">📊 Quick Progress Log</h2>
-
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Weight (kg)</label>
-                    <input type="number" id="quick-weight" step="0.1" placeholder="Current weight" style="
-                        width: 100%; padding: 10px; border: 2px solid #e2e8f0; border-radius: 8px;
-                    ">
-                </div>
-
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Skin Rating (1-10)</label>
-                    <input type="range" id="quick-skin" min="1" max="10" value="7" style="width: 100%;">
-                    <span id="skin-value">7</span>
-                </div>
-
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Energy Level (1-10)</label>
-                    <input type="range" id="quick-energy" min="1" max="10" value="7" style="width: 100%;">
-                    <span id="energy-value">7</span>
-                </div>
-
-                <div style="margin-bottom: 15px;">
-                    <label style="display: flex; align-items: center; font-weight: 600;">
-                        <input type="checkbox" id="quick-workout" style="margin-right: 10px;">
-                        Completed today's workout
-                    </label>
-                </div>
-
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Notes (optional)</label>
-                    <textarea id="quick-notes" placeholder="How are you feeling? Any observations?" style="
-                        width: 100%; padding: 10px; border: 2px solid #e2e8f0; border-radius: 8px; resize: vertical;
-                        min-height: 60px;
-                    "></textarea>
-                </div>
-
-                <div style="display: flex; gap: 10px;">
-                    <button onclick="this.closest('.modal-backdrop').remove()" style="
-                        flex: 1; padding: 12px; background: #e2e8f0; border: none; border-radius: 8px;
-                        cursor: pointer; font-weight: 600;
-                    ">Cancel</button>
-                    <button id="save-log" style="
-                        flex: 2; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                        color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;
-                    ">Save Progress</button>
-                </div>
-            </div>
-        `;
-
-        modal.className = 'modal-backdrop';
-        document.body.appendChild(modal);
-
-        // Setup range value displays
-        const skinRange = modal.querySelector('#quick-skin');
-        const energyRange = modal.querySelector('#quick-energy');
-        const skinValue = modal.querySelector('#skin-value');
-        const energyValue = modal.querySelector('#energy-value');
-
-        skinRange.addEventListener('input', () => {
-            skinValue.textContent = skinRange.value;
-        });
-
-        energyRange.addEventListener('input', () => {
-            energyValue.textContent = energyRange.value;
-        });
-
-        // Setup save button
-        modal.querySelector('#save-log').addEventListener('click', () => {
-            const data = {
-                weight: parseFloat(modal.querySelector('#quick-weight').value) || this.getCurrentWeight(),
-                skinRating: parseInt(modal.querySelector('#quick-skin').value),
-                energyLevel: parseInt(modal.querySelector('#quick-energy').value),
-                workoutCompleted: modal.querySelector('#quick-workout').checked,
-                notes: modal.querySelector('#quick-notes').value
-            };
-
-            this.logProgress(data);
-            modal.remove();
-        });
-
-        // Close on backdrop click
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.remove();
+        // Form change detection
+        document.addEventListener('input', (e) => {
+            if (e.target.matches('input[type="range"]')) {
+                this.updateRangeValue(e.target);
             }
         });
     }
 
+    setupRangeInputs() {
+        document.querySelectorAll('input[type="range"]').forEach(range => {
+            this.updateRangeValue(range);
+            range.addEventListener('input', () => this.updateRangeValue(range));
+        });
+    }
+
+    updateRangeValue(rangeInput) {
+        const valueId = rangeInput.id + '_val';
+        const valueElement = document.getElementById(valueId);
+        if (valueElement) {
+            valueElement.textContent = rangeInput.value;
+        }
+    }
+
+    // Data Import/Export
+    exportData() {
+        const dataToExport = {
+            ...this.data,
+            exportDate: new Date().toISOString(),
+            appVersion: '2.0.0'
+        };
+
+        const blob = new Blob([JSON.stringify(dataToExport, null, 2)], {
+            type: 'application/json'
+        });
+
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `transformation-data-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        this.showNotification('📤 Data exported successfully!', 'success');
+    }
+
+    importData(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const importedData = JSON.parse(e.target.result);
+
+                if (confirm('This will replace all current data. Are you sure you want to continue?')) {
+                    this.data = importedData;
+                    this.saveAllData();
+                    this.loadSectionData(this.currentSection);
+                    this.showNotification('📥 Data imported successfully!', 'success');
+
+                    // Refresh the page to show all imported data
+                    setTimeout(() => window.location.reload(), 1000);
+                }
+            } catch (error) {
+                this.showNotification('❌ Error importing data. Please check the file format.', 'error');
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    clearAllData() {
+        if (confirm('Are you sure you want to delete ALL data? This cannot be undone.')) {
+            if (confirm('This will permanently delete everything. Are you absolutely sure?')) {
+                localStorage.removeItem('transformationTrackerData');
+                this.data = this.createDefaultData();
+                this.loadSectionData(this.currentSection);
+                this.updateDashboard();
+                this.showNotification('🗑️ All data cleared', 'info');
+            }
+        }
+    }
+
+    // Notifications
     showNotification(message, type = 'info') {
+        // Remove existing notifications
+        document.querySelectorAll('.notification').forEach(notif => notif.remove());
+
         const notification = document.createElement('div');
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: ${type === 'success' ? '#48bb78' : type === 'warning' ? '#ed8936' : '#667eea'};
-            color: white;
-            padding: 15px 20px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            z-index: 1000;
-            animation: slideIn 0.3s ease;
-            max-width: 300px;
-        `;
+        notification.className = 'notification';
+
+        const colors = {
+            success: '#48bb78',
+            error: '#e53e3e',
+            info: '#4299e1',
+            warning: '#ed8936'
+        };
+
+        notification.style.backgroundColor = colors[type] || colors.info;
         notification.textContent = message;
         document.body.appendChild(notification);
 
+        // Auto-remove after 4 seconds
         setTimeout(() => {
-            notification.style.animation = 'slideOut 0.3s ease';
+            notification.style.animation = 'slideOut 0.3s ease forwards';
             setTimeout(() => notification.remove(), 300);
         }, 4000);
     }
 
-    // Meal planning helper
-    generateMealPlan() {
-        const meals = {
-            breakfast: [
-                '3 eggs + 2 rotis + vegetables (500 cal)',
-                'Greek yogurt + fruits + nuts (450 cal)',
-                'Oats + banana + almonds (400 cal)'
-            ],
-            lunch: [
-                '150g chicken + rice + vegetables + salad (600 cal)',
-                '2 cups dal + 2 rotis + vegetables (550 cal)',
-                'Quinoa bowl + paneer + vegetables (580 cal)'
-            ],
-            snack: [
-                'Protein smoothie + banana (300 cal)',
-                'Sprouted chana + green tea (250 cal)',
-                'Greek yogurt + berries (200 cal)'
-            ],
-            dinner: [
-                'Grilled fish + quinoa + steamed vegetables (500 cal)',
-                'Paneer curry + cauliflower rice (450 cal)',
-                'Chicken salad + sweet potato (480 cal)'
-            ]
+    // Data Analysis & Insights
+    generateSectionSummary(sectionName) {
+        const sectionData = this.data.sections[sectionName]?.data || {};
+        const completion = this.data.sections[sectionName]?.completion || 0;
+
+        return {
+            sectionName,
+            completion,
+            totalFields: Object.keys(sectionData).length,
+            filledFields: Object.values(sectionData).filter(v => v !== null && v !== '').length,
+            lastSaved: this.data.sections[sectionName]?.lastSaved
         };
-
-        return meals;
     }
 
-    // Workout reminder system
-    setupWorkoutReminders() {
-        const now = new Date();
-        const workoutTime = new Date();
-        workoutTime.setHours(18, 0, 0, 0); // 6 PM default
-
-        if (now < workoutTime) {
-            const timeToWorkout = workoutTime - now;
-            setTimeout(() => {
-                this.showNotification('🏋️ Time for your workout! Check today\'s routine.', 'info');
-            }, timeToWorkout);
-        }
+    getDataOverview() {
+        return {
+            totalSections: this.sections.length,
+            completedSections: this.getCompletedSections(),
+            totalEntries: this.getTotalEntries(),
+            overallCompletion: this.getOverallCompletion(),
+            lastUpdate: this.data.metadata?.lastUpdated,
+            sections: this.sections.map(section => this.generateSectionSummary(section))
+        };
     }
 }
 
-// Global function for tab switching
-function showTab(tabName) {
-    document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.remove('active');
-    });
-
-    document.querySelectorAll('.tab').forEach(tab => {
-        tab.classList.remove('active');
-    });
-
-    document.getElementById(tabName).classList.add('active');
-    event.target.classList.add('active');
+// Global functions for HTML interactions
+function showSection(sectionName) {
+    window.tracker.showSection(sectionName);
 }
 
-// Initialize the transformation app
+function saveSection(sectionName) {
+    window.tracker.saveSection(sectionName);
+}
+
+function resetSection(sectionName) {
+    window.tracker.resetSection(sectionName);
+}
+
+function exportData() {
+    window.tracker.exportData();
+}
+
+function importData(event) {
+    window.tracker.importData(event);
+}
+
+function clearAllData() {
+    window.tracker.clearAllData();
+}
+
+// Initialize the application
 window.addEventListener('DOMContentLoaded', () => {
-    window.transformationApp = new TransformationApp();
-
-    // Setup workout reminders
-    window.transformationApp.setupWorkoutReminders();
+    window.tracker = new TransformationTracker();
 
     // Show welcome message on first visit
-    const isFirstVisit = !localStorage.getItem('transformationData');
+    const isFirstVisit = !localStorage.getItem('transformationTrackerData');
     if (isFirstVisit) {
         setTimeout(() => {
-            window.transformationApp.showNotification('Welcome to your transformation journey! 🚀 Use Ctrl+L for quick progress logging.', 'success');
-        }, 2000);
+            window.tracker.showNotification('🎯 Welcome to your Personal Transformation Tracker! Start by filling out any section and saving your data.', 'success');
+        }, 1500);
     }
+
+    // Add slideOut animation to CSS
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
 });
 
-// Add notification styles
-const notificationStyles = document.createElement('style');
-notificationStyles.textContent = `
-    @keyframes slideIn {
-        from { transform: translateX(100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
+// Auto-save interval (every 5 minutes if there are unsaved changes)
+setInterval(() => {
+    if (window.tracker && document.hasFocus()) {
+        window.tracker.saveAllData();
     }
-    @keyframes slideOut {
-        from { transform: translateX(0); opacity: 1; }
-        to { transform: translateX(100%); opacity: 0; }
-    }
-`;
-document.head.appendChild(notificationStyles);
+}, 5 * 60 * 1000);
