@@ -574,6 +574,31 @@
             margin-bottom: 10px;
             font-size: 1.2em;
         }
+
+        .day-button {
+            transition: all 0.3s ease;
+            font-size: 1em;
+            border: none !important;
+            cursor: pointer;
+        }
+
+        .day-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .day-plan {
+            animation: fadeIn 0.4s ease;
+        }
+
+        .day-plan h3 {
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .day-plan h4 {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -2699,67 +2724,381 @@
 
                 <!-- Calendar Section -->
                 <div id="calendar" class="section">
-                    <h2 class="section-title">📅 Complete Maintenance Schedule</h2>
+                    <h2 class="section-title">📅 Your Daily Action Plan</h2>
 
                     <div style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); border-radius: 20px; padding: 30px; margin-bottom: 30px; text-align: center; border: 4px solid #d97706;">
-                        <h3 style="color: #78350f; font-size: 1.8em; margin-bottom: 20px;">🗓️ Never Miss Your Routine</h3>
+                        <h3 style="color: #78350f; font-size: 1.8em; margin-bottom: 20px;">📱 Click Any Day to See Your Plan</h3>
                         <div style="background: white; border-radius: 15px; padding: 25px; color: #1f2937;">
-                            <p style="margin: 0; font-size: 1.1em;">Consistency is key - this schedule organizes everything you need to do</p>
+                            <p style="margin: 0; font-size: 1.1em;">Each day has a specific plan - just click and follow!</p>
                         </div>
                     </div>
 
-                    <!-- Daily Schedule -->
+                    <!-- Week View -->
                     <div class="collapsible active">
                         <div class="collapsible-header" onclick="toggleCollapsible(this)">
-                            <span>📅 Daily Schedule</span>
+                            <span>📅 Choose Your Day</span>
                             <span class="collapsible-arrow" style="transform: rotate(180deg);">▼</span>
                         </div>
                         <div class="collapsible-content active">
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
-                                <div style="background: #fef7cd; padding: 20px; border-radius: 12px; border: 2px solid #f59e0b;">
-                                    <h5 style="color: #92400e; margin-bottom: 15px;">☀️ Every Morning</h5>
-                                    <div style="color: #78350f; font-size: 0.9em; line-height: 1.8;">
-                                        1️⃣ <strong>Face wash</strong> (Cetaphil)<br>
-                                        2️⃣ <strong>Vitamin C serum</strong> (2-3 drops)<br>
-                                        3️⃣ <strong>Moisturizer</strong><br>
-                                        4️⃣ <strong>SPF 50 sunscreen</strong><br>
-                                        5️⃣ <strong>Check mustache line</strong><br>
-                                        6️⃣ <strong>Style hair</strong> (textured quiff)
+                            <!-- Day Selector -->
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px; margin: 20px 0;">
+                                <button onclick="showDay('sunday')" class="day-button" style="background: linear-gradient(135deg, #ffd700 0%, #ffed4a 100%); border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: bold; color: #92400e; border: 3px solid #f59e0b;">
+                                    📅 SUNDAY
+                                </button>
+                                <button onclick="showDay('monday')" class="day-button" style="background: linear-gradient(135deg, #c0c0c0 0%, #e5e7eb 100%); border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: bold; color: #374151; border: 3px solid #6b7280;">
+                                    📅 MONDAY
+                                </button>
+                                <button onclick="showDay('tuesday')" class="day-button" style="background: linear-gradient(135deg, #cd7f32 0%, #d97706 100%); border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: bold; color: #451a03; border: 3px solid #92400e;">
+                                    📅 TUESDAY
+                                </button>
+                                <button onclick="showDay('wednesday')" class="day-button" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: bold; color: #78350f; border: 3px solid #d97706;">
+                                    📅 WEDNESDAY
+                                </button>
+                                <button onclick="showDay('thursday')" class="day-button" style="background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%); border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: bold; color: white; border: 3px solid #7c3aed;">
+                                    📅 THURSDAY
+                                </button>
+                                <button onclick="showDay('friday')" class="day-button" style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: bold; color: white; border: 3px solid #047857;">
+                                    📅 FRIDAY
+                                </button>
+                                <button onclick="showDay('saturday')" class="day-button" style="background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: bold; color: white; border: 3px solid #b91c1c;">
+                                    📅 SATURDAY
+                                </button>
+                            </div>
+
+                            <!-- Day Plans -->
+                            <!-- Sunday Plan -->
+                            <div id="sunday-plan" class="day-plan" style="display: block;">
+                                <div style="background: linear-gradient(135deg, #ffd700 0%, #ffed4a 100%); padding: 25px; border-radius: 15px; margin: 20px 0; border: 3px solid #f59e0b;">
+                                    <h3 style="color: #92400e; text-align: center; margin-bottom: 20px; font-size: 1.5em;">🌟 SUNDAY - Planning & Recovery Day</h3>
+
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin: 20px 0;">
+                                        <div style="background: white; padding: 20px; border-radius: 12px;">
+                                            <h4 style="color: #92400e; margin-bottom: 15px;">☀️ Morning</h4>
+                                            <div style="color: #451a03; line-height: 1.6;">
+                                                • Face wash + Vitamin C + Moisturizer + SPF<br>
+                                                • Style hair (textured quiff)<br>
+                                                • <strong>🥤 Juice: Coconut Water</strong> (empty stomach)<br>
+                                                • Plan week's meals<br>
+                                                • Check beard shape
+                                            </div>
+                                        </div>
+
+                                        <div style="background: white; padding: 20px; border-radius: 12px;">
+                                            <h4 style="color: #92400e; margin-bottom: 15px;">🌅 Afternoon</h4>
+                                            <div style="color: #451a03; line-height: 1.6;">
+                                                • <strong>🌿 Rosemary oil massage</strong> (2-3 minutes)<br>
+                                                • Tool cleaning & maintenance<br>
+                                                • Organize grooming area<br>
+                                                • Review week's progress<br>
+                                                • Light cardio (optional)
+                                            </div>
+                                        </div>
+
+                                        <div style="background: white; padding: 20px; border-radius: 12px;">
+                                            <h4 style="color: #92400e; margin-bottom: 15px;">🌙 Night</h4>
+                                            <div style="color: #451a03; line-height: 1.6;">
+                                                • Face wash + Niacinamide + Moisturizer<br>
+                                                • Remove any stray beard hairs<br>
+                                                • Prep clothes for Monday<br>
+                                                • <strong>🍅 Tomato juice</strong> (before dinner)<br>
+                                                • Early bedtime (7-8 hours sleep)
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div style="background: #e0f2fe; padding: 20px; border-radius: 12px; border: 2px solid #0891b2;">
-                                    <h5 style="color: #0c4a6e; margin-bottom: 15px;">🌙 Every Night</h5>
-                                    <div style="color: #164e63; font-size: 0.9em; line-height: 1.8;">
-                                        1️⃣ <strong>Face wash</strong> (same cleanser)<br>
-                                        2️⃣ <strong>Niacinamide serum</strong> (5%)<br>
-                                        3️⃣ <strong>Moisturizer</strong><br>
-                                        4️⃣ <strong>Check beard shape</strong><br>
-                                        5️⃣ <strong>Remove stray hairs</strong><br>
-                                        6️⃣ <strong>Plan tomorrow's outfit</strong>
+                            <!-- Monday Plan -->
+                            <div id="monday-plan" class="day-plan" style="display: none;">
+                                <div style="background: linear-gradient(135deg, #c0c0c0 0%, #e5e7eb 100%); padding: 25px; border-radius: 15px; margin: 20px 0; border: 3px solid #6b7280;">
+                                    <h3 style="color: #374151; text-align: center; margin-bottom: 20px; font-size: 1.5em;">💪 MONDAY - Strong Start Day</h3>
+
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin: 20px 0;">
+                                        <div style="background: white; padding: 20px; border-radius: 12px;">
+                                            <h4 style="color: #374151; margin-bottom: 15px;">☀️ Morning</h4>
+                                            <div style="color: #1f2937; line-height: 1.6;">
+                                                • Face wash + Vitamin C + Moisturizer + SPF<br>
+                                                • <strong>🧴 NIZORAL SHAMPOO</strong> (5 min on scalp)<br>
+                                                • Conditioner after Nizoral<br>
+                                                • <strong>🥤 Juice: Amla Juice</strong> (empty stomach)<br>
+                                                • Style hair when dry
+                                            </div>
+                                        </div>
+
+                                        <div style="background: white; padding: 20px; border-radius: 12px;">
+                                            <h4 style="color: #374151; margin-bottom: 15px;">🌅 Afternoon</h4>
+                                            <div style="color: #1f2937; line-height: 1.6;">
+                                                • Check mustache line<br>
+                                                • Eat protein-rich lunch<br>
+                                                • 💪 <strong>Upper body workout</strong><br>
+                                                • Drink plenty of water<br>
+                                                • Avoid touching face
+                                            </div>
+                                        </div>
+
+                                        <div style="background: white; padding: 20px; border-radius: 12px;">
+                                            <h4 style="color: #374151; margin-bottom: 15px;">🌙 Night</h4>
+                                            <div style="color: #1f2937; line-height: 1.6;">
+                                                • Face wash + Niacinamide + Moisturizer<br>
+                                                • <strong>🌿 Rosemary + Jojoba oil</strong> on beard<br>
+                                                • Massage beard area (2-3 min)<br>
+                                                • Plan Tuesday outfit<br>
+                                                • 7-8 hours sleep target
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tuesday Plan -->
+                            <div id="tuesday-plan" class="day-plan" style="display: none;">
+                                <div style="background: linear-gradient(135deg, #cd7f32 0%, #d97706 100%); padding: 25px; border-radius: 15px; margin: 20px 0; border: 3px solid #92400e;">
+                                    <h3 style="color: #451a03; text-align: center; margin-bottom: 20px; font-size: 1.5em;">🔥 TUESDAY - Energy Day</h3>
+
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin: 20px 0;">
+                                        <div style="background: white; padding: 20px; border-radius: 12px;">
+                                            <h4 style="color: #92400e; margin-bottom: 15px;">☀️ Morning</h4>
+                                            <div style="color: #78350f; line-height: 1.6;">
+                                                • Face wash + Vitamin C + Moisturizer + SPF<br>
+                                                • Style hair (check for volume)<br>
+                                                • <strong>🥤 Juice: Carrot & Beetroot</strong><br>
+                                                • Eggs for breakfast<br>
+                                                • Check beard symmetry
+                                            </div>
+                                        </div>
+
+                                        <div style="background: white; padding: 20px; border-radius: 12px;">
+                                            <h4 style="color: #92400e; margin-bottom: 15px;">🌅 Afternoon</h4>
+                                            <div style="color: #78350f; line-height: 1.6;">
+                                                • 🏃 <strong>Cardio workout</strong> (20-30 min)<br>
+                                                • Post-workout shower<br>
+                                                • Protein-rich meal<br>
+                                                • Check skin for improvements<br>
+                                                • Avoid processed foods
+                                            </div>
+                                        </div>
+
+                                        <div style="background: white; padding: 20px; border-radius: 12px;">
+                                            <h4 style="color: #92400e; margin-bottom: 15px;">🌙 Night</h4>
+                                            <div style="color: #78350f; line-height: 1.6;">
+                                                • Face wash + Niacinamide + Moisturizer<br>
+                                                • <strong>🧔 Beard oil application</strong><br>
+                                                • Brush beard with boar bristle<br>
+                                                • Review daily nutrition<br>
+                                                • Prepare for tomorrow
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Wednesday Plan -->
+                            <div id="wednesday-plan" class="day-plan" style="display: none;">
+                                <div style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 25px; border-radius: 15px; margin: 20px 0; border: 3px solid #d97706;">
+                                    <h3 style="color: #78350f; text-align: center; margin-bottom: 20px; font-size: 1.5em;">✨ WEDNESDAY - Midweek Refresh</h3>
+
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin: 20px 0;">
+                                        <div style="background: white; padding: 20px; border-radius: 12px;">
+                                            <h4 style="color: #92400e; margin-bottom: 15px;">☀️ Morning</h4>
+                                            <div style="color: #78350f; line-height: 1.6;">
+                                                • Face wash + Vitamin C + Moisturizer + SPF<br>
+                                                • <strong>🧴 Regular shampoo</strong> + conditioner<br>
+                                                • <strong>🥤 Juice: Amla Juice</strong><br>
+                                                • Style hair with fresh look<br>
+                                                • Trim beard if needed
+                                            </div>
+                                        </div>
+
+                                        <div style="background: white; padding: 20px; border-radius: 12px;">
+                                            <h4 style="color: #92400e; margin-bottom: 15px;">🌅 Afternoon</h4>
+                                            <div style="color: #78350f; line-height: 1.6;">
+                                                • <strong>🌿 Rosemary oil massage</strong> (2-3 hours before wash)<br>
+                                                • Light exercise or walk<br>
+                                                • Eat almonds + walnuts<br>
+                                                • Check grooming tools<br>
+                                                • Hydrate well
+                                            </div>
+                                        </div>
+
+                                        <div style="background: white; padding: 20px; border-radius: 12px;">
+                                            <h4 style="color: #92400e; margin-bottom: 15px;">🌙 Night</h4>
+                                            <div style="color: #78350f; line-height: 1.6;">
+                                                • Wash out rosemary oil thoroughly<br>
+                                                • Face wash + Niacinamide + Moisturizer<br>
+                                                • Define beard neckline<br>
+                                                • <strong>🍅 Tomato juice</strong><br>
+                                                • Review week's progress
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Thursday Plan -->
+                            <div id="thursday-plan" class="day-plan" style="display: none;">
+                                <div style="background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%); padding: 25px; border-radius: 15px; margin: 20px 0; border: 3px solid #7c3aed;">
+                                    <h3 style="color: white; text-align: center; margin-bottom: 20px; font-size: 1.5em;">💜 THURSDAY - Power Day</h3>
+
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin: 20px 0;">
+                                        <div style="background: white; padding: 20px; border-radius: 12px;">
+                                            <h4 style="color: #7c3aed; margin-bottom: 15px;">☀️ Morning</h4>
+                                            <div style="color: #581c87; line-height: 1.6;">
+                                                • Face wash + Vitamin C + Moisturizer + SPF<br>
+                                                • <strong>🧴 NIZORAL SHAMPOO</strong> (5 min)<br>
+                                                • Conditioner after Nizoral<br>
+                                                • <strong>🥤 Juice: Carrot & Beetroot</strong><br>
+                                                • Check scalp health
+                                            </div>
+                                        </div>
+
+                                        <div style="background: white; padding: 20px; border-radius: 12px;">
+                                            <h4 style="color: #7c3aed; margin-bottom: 15px;">🌅 Afternoon</h4>
+                                            <div style="color: #581c87; line-height: 1.6;">
+                                                • 💪 <strong>Upper body workout</strong><br>
+                                                • Focus on shoulders/chest<br>
+                                                • Protein shake post-workout<br>
+                                                • Check mustache alignment<br>
+                                                • Stay consistent with water
+                                            </div>
+                                        </div>
+
+                                        <div style="background: white; padding: 20px; border-radius: 12px;">
+                                            <h4 style="color: #7c3aed; margin-bottom: 15px;">🌙 Night</h4>
+                                            <div style="color: #581c87; line-height: 1.6;">
+                                                • Face wash + Niacinamide + Moisturizer<br>
+                                                • <strong>🌿 Rosemary + Jojoba oil</strong> massage<br>
+                                                • Brush beard thoroughly<br>
+                                                • Plan Friday's style<br>
+                                                • Quality sleep preparation
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Friday Plan -->
+                            <div id="friday-plan" class="day-plan" style="display: none;">
+                                <div style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); padding: 25px; border-radius: 15px; margin: 20px 0; border: 3px solid #047857;">
+                                    <h3 style="color: white; text-align: center; margin-bottom: 20px; font-size: 1.5em;">🎉 FRIDAY - Finish Strong</h3>
+
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin: 20px 0;">
+                                        <div style="background: white; padding: 20px; border-radius: 12px;">
+                                            <h4 style="color: #047857; margin-bottom: 15px;">☀️ Morning</h4>
+                                            <div style="color: #065f46; line-height: 1.6;">
+                                                • Face wash + Vitamin C + Moisturizer + SPF<br>
+                                                • Style hair perfectly<br>
+                                                • <strong>🥤 Juice: Amla Juice</strong><br>
+                                                • Dress sharp (weekend prep)<br>
+                                                • Fresh beard grooming
+                                            </div>
+                                        </div>
+
+                                        <div style="background: white; padding: 20px; border-radius: 12px;">
+                                            <h4 style="color: #047857; margin-bottom: 15px;">🌅 Afternoon</h4>
+                                            <div style="color: #065f46; line-height: 1.6;">
+                                                • Light workout or long walk<br>
+                                                • Social/work interactions<br>
+                                                • Maintain good posture<br>
+                                                • Avoid touching face<br>
+                                                • Stay confident
+                                            </div>
+                                        </div>
+
+                                        <div style="background: white; padding: 20px; border-radius: 12px;">
+                                            <h4 style="color: #047857; margin-bottom: 15px;">🌙 Night</h4>
+                                            <div style="color: #065f46; line-height: 1.6;">
+                                                • Face wash + Niacinamide + Moisturizer<br>
+                                                • <strong>🧔 Beard oil application</strong><br>
+                                                • Plan weekend activities<br>
+                                                • <strong>🍅 Tomato juice</strong><br>
+                                                • Celebrate week's progress
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Saturday Plan -->
+                            <div id="saturday-plan" class="day-plan" style="display: none;">
+                                <div style="background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); padding: 25px; border-radius: 15px; margin: 20px 0; border: 3px solid #b91c1c;">
+                                    <h3 style="color: white; text-align: center; margin-bottom: 20px; font-size: 1.5em;">🔴 SATURDAY - Deep Clean Day</h3>
+
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin: 20px 0;">
+                                        <div style="background: white; padding: 20px; border-radius: 12px;">
+                                            <h4 style="color: #dc2626; margin-bottom: 15px;">☀️ Morning</h4>
+                                            <div style="color: #7f1d1d; line-height: 1.6;">
+                                                • Face wash + Vitamin C + Moisturizer + SPF<br>
+                                                • <strong>🧴 Regular shampoo</strong> + conditioner<br>
+                                                • <strong>🥤 Juice: Green Juice</strong><br>
+                                                • Deep clean grooming area<br>
+                                                • Fresh towels & pillowcase
+                                            </div>
+                                        </div>
+
+                                        <div style="background: white; padding: 20px; border-radius: 12px;">
+                                            <h4 style="color: #dc2626; margin-bottom: 15px;">🌅 Afternoon</h4>
+                                            <div style="color: #7f1d1d; line-height: 1.6;">
+                                                • <strong>✂️ Define neckline & cheek lines</strong><br>
+                                                • Detailed beard grooming<br>
+                                                • Clean all grooming tools<br>
+                                                • Shopping for groceries<br>
+                                                • Meal prep for next week
+                                            </div>
+                                        </div>
+
+                                        <div style="background: white; padding: 20px; border-radius: 12px;">
+                                            <h4 style="color: #dc2626; margin-bottom: 15px;">🌙 Night</h4>
+                                            <div style="color: #7f1d1d; line-height: 1.6;">
+                                                • Face wash + Niacinamide + Moisturizer<br>
+                                                • Thorough beard maintenance<br>
+                                                • <strong>📸 Take progress photos</strong><br>
+                                                • Plan Sunday activities<br>
+                                                • Rest and recover
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Weekly Schedule -->
-                    <div class="collapsible active">
+                    <!-- Quick Daily Checklist -->
+                    <div class="collapsible">
                         <div class="collapsible-header" onclick="toggleCollapsible(this)">
-                            <span>🗓️ Weekly Schedule</span>
-                            <span class="collapsible-arrow" style="transform: rotate(180deg);">▼</span>
+                            <span>✅ Daily Essentials Checklist</span>
+                            <span class="collapsible-arrow">▼</span>
                         </div>
-                        <div class="collapsible-content active">
+                        <div class="collapsible-content">
+                            <div style="background: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 20px; border-radius: 8px; margin: 15px 0;">
+                                <h5 style="color: #0c4a6e; margin-bottom: 15px;">🌅 Every Morning (7 Days)</h5>
+                                <div style="color: #164e63; line-height: 1.8;">
+                                    ☑️ Face wash + Vitamin C + Moisturizer + SPF 50<br>
+                                    ☑️ Style hair (textured quiff + low taper)<br>
+                                    ☑️ Morning juice (see daily plan)<br>
+                                    ☑️ Check mustache line<br>
+                                    ☑️ Protein breakfast (eggs)
+                                </div>
+                            </div>
+
+                            <div style="background: #f3e8ff; border-left: 4px solid #9333ea; padding: 20px; border-radius: 8px; margin: 15px 0;">
+                                <h5 style="color: #6b21a8; margin-bottom: 15px;">🌙 Every Night (7 Days)</h5>
+                                <div style="color: #581c87; line-height: 1.8;">
+                                    ☑️ Face wash + Niacinamide + Moisturizer<br>
+                                    ☑️ Check beard shape & remove stray hairs<br>
+                                    ☑️ Apply beard oil (as per daily plan)<br>
+                                    ☑️ Plan tomorrow's outfit<br>
+                                    ☑️ 7-8 hours sleep target
+                                </div>
+                            </div>
+
                             <div style="background: #f0fdf4; border-left: 4px solid #16a34a; padding: 20px; border-radius: 8px; margin: 15px 0;">
-                                <h5 style="color: #15803d; margin-bottom: 15px;">📋 Weekly Task List</h5>
-                                <div style="color: #166534; line-height: 1.6;">
-                                    <strong>Monday:</strong> Nizoral shampoo + conditioner, rosemary oil massage<br>
-                                    <strong>Tuesday:</strong> Beard oil application, workout (upper body)<br>
-                                    <strong>Wednesday:</strong> Regular shampoo, trim beard length if needed<br>
-                                    <strong>Thursday:</strong> Nizoral shampoo + conditioner, rosemary oil massage<br>
-                                    <strong>Friday:</strong> Beard oil application, workout (upper body)<br>
-                                    <strong>Saturday:</strong> Regular shampoo, define neckline and cheek lines<br>
-                                    <strong>Sunday:</strong> Rosemary oil massage, plan next week's meals, tool cleaning
+                                <h5 style="color: #15803d; margin-bottom: 15px;">🍃 Special Tasks</h5>
+                                <div style="color: #166534; line-height: 1.8;">
+                                    ☑️ <strong>Monday & Thursday:</strong> Nizoral shampoo (5 min on scalp)<br>
+                                    ☑️ <strong>Wednesday & Sunday:</strong> Rosemary oil massage<br>
+                                    ☑️ <strong>Monday, Tuesday, Thursday:</strong> Workouts<br>
+                                    ☑️ <strong>Saturday:</strong> Deep grooming & tool cleaning<br>
+                                    ☑️ <strong>Daily:</strong> 3-4 liters water
                                 </div>
                             </div>
                         </div>
@@ -3083,6 +3422,32 @@
             } else {
                 arrow.style.transform = 'rotate(0deg)';
             }
+        }
+
+        function showDay(dayName) {
+            // Hide all day plans
+            const dayPlans = document.querySelectorAll('.day-plan');
+            dayPlans.forEach(plan => {
+                plan.style.display = 'none';
+            });
+
+            // Show selected day plan
+            const selectedPlan = document.getElementById(dayName + '-plan');
+            if (selectedPlan) {
+                selectedPlan.style.display = 'block';
+            }
+
+            // Update button styles
+            const dayButtons = document.querySelectorAll('.day-button');
+            dayButtons.forEach(button => {
+                button.style.transform = 'scale(1)';
+                button.style.boxShadow = 'none';
+            });
+
+            // Highlight selected button
+            const clickedButton = event.target;
+            clickedButton.style.transform = 'scale(1.05)';
+            clickedButton.style.boxShadow = '0 8px 20px rgba(0,0,0,0.2)';
         }
 
         function selectColor(colorName) {
