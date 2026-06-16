@@ -3,7 +3,7 @@
   "name": "personal-transformation-master",
   "builds": [
     {
-      "src": "index.html",
+      "src": "**",
       "use": "@vercel/static"
     }
   ],
