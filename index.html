@@ -636,6 +636,7 @@
                 <button class="nav-tab" onclick="showSection('tools')">🛠️ Tools</button>
                 <button class="nav-tab" onclick="showSection('calendar')">📅 Schedule</button>
                 <button class="nav-tab" onclick="showSection('budget')">💰 Budget</button>
+                <button class="nav-tab" onclick="showSection('diet')">🥗 Food & Diet</button>
             </div>
 
             <div class="section-content">
@@ -3383,6 +3384,185 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Food & Diet Section -->
+                <div id="diet" class="section">
+                    <h2 class="section-title">🥗 Food & Diet Plan</h2>
+
+                    <!-- Hero banner -->
+                    <div style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); border-radius: 20px; padding: 30px; margin-bottom: 30px; text-align: center; border: 4px solid #14532d;">
+                        <h3 style="color: #ffffff; font-size: 1.8em; margin-bottom: 10px;">🌱 Clean Eating for Peak Performance</h3>
+                        <p style="color: #bbf7d0; font-size: 1.05em; margin: 0;">High protein · Whole foods · Minimal processing · Consistent fuel</p>
+                    </div>
+
+                    <!-- Breakfast -->
+                    <div class="collapsible active">
+                        <div class="collapsible-header" onclick="toggleCollapsible(this)" style="background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);">
+                            <span>🍳 Breakfast</span>
+                            <span class="collapsible-arrow" style="transform: rotate(180deg);">▼</span>
+                        </div>
+                        <div class="collapsible-content active">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; padding: 5px 0;">
+                                <div style="background: #fff7ed; border-left: 4px solid #f97316; border-radius: 10px; padding: 18px;">
+                                    <div style="font-size: 2em; margin-bottom: 8px;">🥚</div>
+                                    <div style="font-weight: 700; color: #9a3412; margin-bottom: 4px;">3 Eggs</div>
+                                    <div style="color: #7c3aed; font-size: 0.85em;">Boiled or steamed</div>
+                                </div>
+                                <div style="background: #fff7ed; border-left: 4px solid #f97316; border-radius: 10px; padding: 18px;">
+                                    <div style="font-size: 2em; margin-bottom: 8px;">🌾</div>
+                                    <div style="font-weight: 700; color: #9a3412; margin-bottom: 4px;">1 Cup Oats</div>
+                                    <div style="color: #7c3aed; font-size: 0.85em;">Plain, cooked</div>
+                                </div>
+                                <div style="background: #fff7ed; border-left: 4px solid #f97316; border-radius: 10px; padding: 18px;">
+                                    <div style="font-size: 2em; margin-bottom: 8px;">🍌</div>
+                                    <div style="font-weight: 700; color: #9a3412; margin-bottom: 4px;">1 Banana</div>
+                                    <div style="color: #7c3aed; font-size: 0.85em;">Natural energy</div>
+                                </div>
+                                <div style="background: #fff7ed; border-left: 4px solid #f97316; border-radius: 10px; padding: 18px;">
+                                    <div style="font-size: 2em; margin-bottom: 8px;">🫐</div>
+                                    <div style="font-weight: 700; color: #9a3412; margin-bottom: 4px;">½–1 Cup Blackberries</div>
+                                    <div style="color: #7c3aed; font-size: 0.85em;">Antioxidants</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lunch -->
+                    <div class="collapsible active" style="margin-top: 15px;">
+                        <div class="collapsible-header" onclick="toggleCollapsible(this)" style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);">
+                            <span>🍗 Lunch</span>
+                            <span class="collapsible-arrow" style="transform: rotate(180deg);">▼</span>
+                        </div>
+                        <div class="collapsible-content active">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; padding: 5px 0;">
+                                <div style="background: #f0fdf4; border-left: 4px solid #16a34a; border-radius: 10px; padding: 18px;">
+                                    <div style="font-size: 2em; margin-bottom: 8px;">🍗</div>
+                                    <div style="font-weight: 700; color: #14532d; margin-bottom: 4px;">150–200 g Chicken Breast</div>
+                                    <div style="color: #7c3aed; font-size: 0.85em;">Steamed, no oil</div>
+                                </div>
+                                <div style="background: #f0fdf4; border-left: 4px solid #16a34a; border-radius: 10px; padding: 18px;">
+                                    <div style="font-size: 2em; margin-bottom: 8px;">🍚</div>
+                                    <div style="font-weight: 700; color: #14532d; margin-bottom: 4px;">1 Cup Brown Rice</div>
+                                    <div style="color: #7c3aed; font-size: 0.85em;">Cooked</div>
+                                </div>
+                                <div style="background: #f0fdf4; border-left: 4px solid #16a34a; border-radius: 10px; padding: 18px;">
+                                    <div style="font-size: 2em; margin-bottom: 8px;">🥦</div>
+                                    <div style="font-weight: 700; color: #14532d; margin-bottom: 4px;">Steamed Vegetables</div>
+                                    <div style="color: #7c3aed; font-size: 0.85em;">Broccoli, carrots, spinach, green beans</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Snack -->
+                    <div class="collapsible active" style="margin-top: 15px;">
+                        <div class="collapsible-header" onclick="toggleCollapsible(this)" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);">
+                            <span>🍎 Snack</span>
+                            <span class="collapsible-arrow" style="transform: rotate(180deg);">▼</span>
+                        </div>
+                        <div class="collapsible-content active">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; padding: 5px 0;">
+                                <div style="background: #fef2f2; border-left: 4px solid #dc2626; border-radius: 10px; padding: 18px;">
+                                    <div style="font-size: 2em; margin-bottom: 8px;">🍎</div>
+                                    <div style="font-weight: 700; color: #7f1d1d; margin-bottom: 4px;">1 Apple</div>
+                                    <div style="color: #7c3aed; font-size: 0.85em;">Fiber + natural sugar</div>
+                                </div>
+                                <div style="background: #fef2f2; border-left: 4px solid #dc2626; border-radius: 10px; padding: 18px;">
+                                    <div style="font-size: 2em; margin-bottom: 8px;">🫙</div>
+                                    <div style="font-weight: 700; color: #7f1d1d; margin-bottom: 4px;">Greek Yogurt</div>
+                                    <div style="color: #7c3aed; font-size: 0.85em;">Plain, unsweetened</div>
+                                </div>
+                                <div style="background: #fef2f2; border-left: 4px solid #dc2626; border-radius: 10px; padding: 18px;">
+                                    <div style="font-size: 2em; margin-bottom: 8px;">🥜</div>
+                                    <div style="font-weight: 700; color: #7f1d1d; margin-bottom: 4px;">Handful of Almonds or Walnuts</div>
+                                    <div style="color: #7c3aed; font-size: 0.85em;">Healthy fats</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dinner -->
+                    <div class="collapsible active" style="margin-top: 15px;">
+                        <div class="collapsible-header" onclick="toggleCollapsible(this)" style="background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);">
+                            <span>🐟 Dinner</span>
+                            <span class="collapsible-arrow" style="transform: rotate(180deg);">▼</span>
+                        </div>
+                        <div class="collapsible-content active">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; padding: 5px 0;">
+                                <div style="background: #eff6ff; border-left: 4px solid #1d4ed8; border-radius: 10px; padding: 18px;">
+                                    <div style="font-size: 2em; margin-bottom: 8px;">🐟</div>
+                                    <div style="font-weight: 700; color: #1e3a8a; margin-bottom: 4px;">150–200 g Chicken or Fish</div>
+                                    <div style="color: #7c3aed; font-size: 0.85em;">Steamed</div>
+                                </div>
+                                <div style="background: #eff6ff; border-left: 4px solid #1d4ed8; border-radius: 10px; padding: 18px;">
+                                    <div style="font-size: 2em; margin-bottom: 8px;">🍚</div>
+                                    <div style="font-weight: 700; color: #1e3a8a; margin-bottom: 4px;">1 Cup Brown Rice</div>
+                                    <div style="color: #7c3aed; font-size: 0.85em;">Or sweet potato for variety</div>
+                                </div>
+                                <div style="background: #eff6ff; border-left: 4px solid #1d4ed8; border-radius: 10px; padding: 18px;">
+                                    <div style="font-size: 2em; margin-bottom: 8px;">🥦</div>
+                                    <div style="font-weight: 700; color: #1e3a8a; margin-bottom: 4px;">Steamed Vegetables</div>
+                                    <div style="color: #7c3aed; font-size: 0.85em;">Any mix you like</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Drinks -->
+                    <div class="collapsible active" style="margin-top: 15px;">
+                        <div class="collapsible-header" onclick="toggleCollapsible(this)" style="background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);">
+                            <span>💧 Drinks</span>
+                            <span class="collapsible-arrow" style="transform: rotate(180deg);">▼</span>
+                        </div>
+                        <div class="collapsible-content active">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; padding: 5px 0;">
+                                <div style="background: #ecfeff; border-left: 4px solid #0891b2; border-radius: 10px; padding: 18px;">
+                                    <div style="font-size: 2em; margin-bottom: 8px;">💧</div>
+                                    <div style="font-weight: 700; color: #164e63; margin-bottom: 4px;">2–3 Liters of Water</div>
+                                    <div style="color: #7c3aed; font-size: 0.85em;">Daily minimum</div>
+                                </div>
+                                <div style="background: #ecfeff; border-left: 4px solid #0891b2; border-radius: 10px; padding: 18px;">
+                                    <div style="font-size: 2em; margin-bottom: 8px;">☕</div>
+                                    <div style="font-weight: 700; color: #164e63; margin-bottom: 4px;">Black Coffee</div>
+                                    <div style="color: #7c3aed; font-size: 0.85em;">Optional — no added sugar</div>
+                                </div>
+                                <div style="background: #ecfeff; border-left: 4px solid #0891b2; border-radius: 10px; padding: 18px;">
+                                    <div style="font-size: 2em; margin-bottom: 8px;">🍵</div>
+                                    <div style="font-weight: 700; color: #164e63; margin-bottom: 4px;">Green Tea</div>
+                                    <div style="color: #7c3aed; font-size: 0.85em;">Optional — no added sugar</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Daily Summary -->
+                    <div style="background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); border-radius: 15px; padding: 25px; margin-top: 25px; text-align: center;">
+                        <h4 style="color: white; margin-bottom: 15px; font-size: 1.2em;">📊 Daily Summary</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px;">
+                            <div style="background: rgba(255,255,255,0.15); border-radius: 10px; padding: 15px;">
+                                <div style="color: #e9d5ff; font-size: 0.8em; margin-bottom: 4px;">PROTEIN</div>
+                                <div style="color: white; font-size: 1.4em; font-weight: 700;">~130–160 g</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.15); border-radius: 10px; padding: 15px;">
+                                <div style="color: #e9d5ff; font-size: 0.8em; margin-bottom: 4px;">CARBS</div>
+                                <div style="color: white; font-size: 1.4em; font-weight: 700;">~180–220 g</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.15); border-radius: 10px; padding: 15px;">
+                                <div style="color: #e9d5ff; font-size: 0.8em; margin-bottom: 4px;">FATS</div>
+                                <div style="color: white; font-size: 1.4em; font-weight: 700;">~40–50 g</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.15); border-radius: 10px; padding: 15px;">
+                                <div style="color: #e9d5ff; font-size: 0.8em; margin-bottom: 4px;">CALORIES</div>
+                                <div style="color: white; font-size: 1.4em; font-weight: 700;">~1600–1900</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.15); border-radius: 10px; padding: 15px;">
+                                <div style="color: #e9d5ff; font-size: 0.8em; margin-bottom: 4px;">WATER</div>
+                                <div style="color: white; font-size: 1.4em; font-weight: 700;">2–3 L</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
